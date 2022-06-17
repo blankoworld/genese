@@ -19,7 +19,7 @@ decouverte_services() {
 
   # Interruption si profil non trouvé.
   if [[ ! -f "./profils/${1}" ]]; then
-    echo -e "Profil ${1} non trouvé !" && exit 1
+    msg_erreur_exit "Profil '${1}' non trouvé !"
   fi
 
   # Chargement des données fournies dans le fichier
@@ -59,20 +59,20 @@ lister_profils() {
   for profil in `ls ./profils`; do
     # Exclusion du profil commun
     if [[ "${profil}" != "commun" ]]; then
-      echo -e "${profil}"
+      msg "${profil}"
       detection=true
     fi
   done
 
   if ! ${detection}; then
-    echo -e "Aucun profil trouvé."
+    msg_attention "Aucun profil trouvé."
   fi
 }
 
 # Listing des services trouvés
 lister_services() {
   for service in ${LISTE_SERVICES[@]}; do
-    echo "Service : ${service}"
+    msg_info "Service : ${service}"
   done
 }
 

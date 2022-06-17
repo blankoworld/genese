@@ -53,6 +53,7 @@ aide() {
 ###
 
 # Chargement des bibliothèques
+source "./bibliotheques/commun"
 source "./bibliotheques/profils"
 
 # Parcours des options
@@ -73,6 +74,7 @@ do
   esac
   shift
 done
+
 
 #####
 ## FIN

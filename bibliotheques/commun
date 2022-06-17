@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+#####
+## VARIABLES
+###
+
+COULEUR_DEFAUT="\033[0m"            # Annulation de couleur
+COULEUR_INFO="\033[7;49;34m"        # Fond bleu
+COULEUR_SUCCES="\033[7;49;32m"      # Fond vert
+COULEUR_ATTENTION="\033[7;49;33m"   # Fond jaune/orange
+COULEUR_ERREUR="\033[7;49;31m"      # Fond rouge
+COULEUR_SPECIALE="\033[1;49;34m"    # Écriture grasse, bleue avec fond normal
+
+#####
+## FONCTIONS
+###
+
+# Messages avec des couleurs, comme les arc-en-ciel :-)
+# Cf. https://misc.flogisoft.com/bash/tip_colors_and_formatting
+msg_couleur() {
+  # $1: couleur choisie
+  # $2: titre
+  # $3: message
+  echo -e "${1}[${2}]${COULEUR_DEFAUT} ${3}" 1>&2
+}
+# Message normal
+msg() {
+  echo -e "${COULEUR_DEFAUT}${1}" 1>&2
+}
+# Message spécial
+msg_special() {
+  echo -e "${COULEUR_SPECIALE}${1}${COULEUR_DEFAUT}" 1>&2
+}
+# Message d'information, plus prononcé
+msg_info() {
+  msg_couleur "${COULEUR_INFO}" "INF" "${1}"
+}
+# Porter l'attention sur une information importante
+msg_attention() {
+  msg_couleur "${COULEUR_ATTENTION}" "ATT" "${1}"
+}
+# Erreur ç_ç
+msg_erreur() {
+  msg_couleur "${COULEUR_ERREUR}" "ERR" "${1}"
+}
+# Réussite !
+msg_succes() {
+  msg_couleur "${COULEUR_SUCCES}" "OK " "${1}"
+}
+# Échec, j'arrête le programme !
+msg_erreur_exit() {
+  msg_erreur "${1}" && exit 1
+}
+# Message pour DEBUG en temps de développement
+msg_debug() {
+  if [[ ${DEBUG} == true ]]; then
+    msg "$1"
+  fi
+}
+
+# vim: ts=2 sw=2 et nu syn=bash
