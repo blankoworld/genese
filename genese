@@ -29,9 +29,6 @@ EXEMPLE
 
 EOF
 
-# Profil par défaut pour créer des instances
-PROFIL="defaut"
-
 #####
 ## FONCTIONS
 ###
@@ -39,82 +36,6 @@ PROFIL="defaut"
 # Affiche l'aide contextuelle
 aide() {
  echo -e "${UTILISATION}" 1>&2
-}
-
-# Liste des profils disponibles comme base pour les instances
-lister_profils() {
-  detection=false
-
-  for profil in `ls ./profils`; do
-    # Exclusion du profil commun
-    if [[ "${profil}" != "commun" ]]; then
-      echo -e "${profil}"
-      detection=true
-    fi
-  done
-
-  if ! ${detection}; then
-    echo -e "Aucun profil trouvé."
-  fi
-}
-
-
-# Découvre les services associés dans le fichier fourni
-# Fonction récursive
-# 1: Nom du profil situé dans le dossier ./profils
-decouverte_services() {
-  fichier="./profils/${1}"
-
-  # Interruption si profil non trouvé.
-  if [[ ! -f "./profils/${1}" ]]; then
-    echo -e "Profil ${1} non trouvé !" && exit 1
-  fi
-
-  # Chargement des données fournies dans le fichier
-  source "${fichier}"
-
-  # Enregistrement des services fournis si la variable existe
-  if [[ -n "${SERVICES}" ]]; then
-    # chargement du tableau
-    les_services="${SERVICES[@]}"
-
-    # Comme nous sommes dans une récursive, on interrompt le processus en
-    # supprimant la variable SERVICES
-    unset SERVICES
-
-    # Enregistrement
-    for service in "${les_services[@]}"; do
-      LISTE_SERVICES+=( "${service}" )
-    done
-
-  fi
-
-  # Les fichiers peuvent avoir un parent
-  if [[ -n "${PARENT}" ]]; then
-    # chargement du parent
-    profil_parent="${PARENT}"
-    unset PARENT
-
-    # récupération des services du parent
-    decouverte_services "${profil_parent}"
-  fi
-}
-
-# Listing des services trouvés
-lister_services() {
-  for service in ${LISTE_SERVICES[@]}; do
-    echo "Service : ${service}"
-  done
-}
-
-# Traite le chargement d'un profil
-# 1: Nom du profil situé dans le dossier ./profils
-charger_profil() {
-  # Découverte de l'ensemble des services associés au fichier fourni
-  decouverte_services "${PROFIL}"
-
-  # Listing des services trouvés
-  lister_services  
 }
 
 #####
@@ -130,6 +51,9 @@ charger_profil() {
 #####
 ## DÉBUT
 ###
+
+# Chargement des bibliothèques
+source "./bibliotheques/profils"
 
 # Parcours des options
 while [[ "$#" -gt 0 ]]
