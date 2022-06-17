@@ -36,6 +36,7 @@ PROFIL="defaut"
 ## FONCTIONS
 ###
 
+# Affiche l'aide contextuelle
 aide() {
  echo -e "${UTILISATION}" 1>&2
 }
@@ -65,8 +66,8 @@ decouverte_services() {
   fichier="./profils/${1}"
 
   # Interruption si profil non trouvé.
-  if [[ ! -f "./profils/${PROFIL}" ]]; then
-    echo -e "Profil ${PROFIL} non trouvé !" && exit 1
+  if [[ ! -f "./profils/${1}" ]]; then
+    echo -e "Profil ${1} non trouvé !" && exit 1
   fi
 
   # Chargement des données fournies dans le fichier
