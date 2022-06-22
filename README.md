@@ -41,3 +41,11 @@ Options disponibles :
 - `-h`, `--help` : Affichage de l'aide contextuelle
 - `-l`, `--list` : Liste des profils disponibles
 - `-p <profil>`, `--profil <profil>` : Utilise le profil `<profil>` comme base de déploiement
+
+# Licence
+
+Ce logiciel est concédé sous [licence EUPL, version 1.2 uniquement](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
+
+# Contact
+
+Le projet est disponible sur [la page Github du projet genese](https://github.com/blankoworld/genese).

@@ -1,6 +1,5 @@
 # TODO
 
-* appliquer une licence
 * suppression d'une instance (dossier instancié)
 * création du docker-compose.yml
 * pour chaque service : 
