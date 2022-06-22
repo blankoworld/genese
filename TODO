@@ -1,0 +1,9 @@
+# TODO
+
+* appliquer une licence
+* suppression d'une instance (dossier instancié)
+* création du docker-compose.yml
+* pour chaque service : 
+  * script d'exécution pré docker up
+  * script post docker up
+  * script final
