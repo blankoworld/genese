@@ -141,16 +141,38 @@ lister_instances() {
 # Supprime l'instance donnée
 # 1: Nom de l'instance
 supprimer_instance() {
-  instance="${REP_INSTANCES}/${1}"
+  nom_instance="${1}"
+  instance="${REP_INSTANCES}/${nom_instance}"
 
   # Contrôle de l'existence de l'instance
   if [[ ! -d "${instance}" ]]; then
     msg_erreur_exit "Instance non trouvée : ${instance}"
   fi
 
-  rm -rf "${instance}"
+  # Alerte à l'utilisateur pour éviter les erreurs
+  msg_attention "Êtes-vous sûr de vouloir supprimer l'instance ${instance} ? (o/N)"
+  read reponse
 
-  msg_succes "Instance supprimée avec succès : ${instance}"
+  case "${reponse}" in
+    o|O)
+      msg_info "Suppression de : ${instance}"
+
+      # Extinction d'éventuels conteneurs lancés
+      docker_compose="${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
+      docker compose -f "${docker_compose}" kill || msg_erreur_exit "Souci \
+avec Docker"
+      docker compose -f "${docker_compose}" down || msg_erreur_exit "Souci \
+avec Docker"
+
+      # Suppression de l'instance
+      rm -rf "${instance}"
+
+      msg_succes "Instance supprimée : ${1}"
+      ;;
+    *)
+      msg_info "Aucune instance supprimée."
+      ;;
+  esac
 }
 
 # vim: ts=2 sw=2 et nu syn=bash
