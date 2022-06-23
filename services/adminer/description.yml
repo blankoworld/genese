@@ -1,0 +1,7 @@
+adminer:
+  image: adminer
+  ports:
+    - 0.0.0.0:${PORT_ADMINER:-}:8080
+  depends_on:
+    - "db"
+

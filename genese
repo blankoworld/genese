@@ -61,8 +61,11 @@ while [[ "$#" -gt 0 ]]
 do
   case "$1" in
       -p | --profil)
-      PROFIL="${2}"
-      charger_profil "${PROFIL:-defaut}"
+      if [[ -n "${2}" ]]; then
+        PROFIL="${2}"
+      fi
+      charger_profil "${PROFIL}"
+      installer_profil "${PROFIL}"
       ;;
       -l | --list)
       lister_profils

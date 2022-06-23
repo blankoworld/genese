@@ -42,6 +42,18 @@ Options disponibles :
 - `-l`, `--list` : Liste des profils disponibles
 - `-p <profil>`, `--profil <profil>` : Utilise le profil `<profil>` comme base de déploiement
 
+# Variables d'environnement
+
+## Concernant l'application
+
+L'utilisation de variables d'environnement permettent de personnaliser le comportement de l'outil.
+
+- `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
+
+## Concernant les exemples de services fournis
+
+- `PORT_ADMINER` : Port d'écoute du service Adminer. Si non renseigné, Docker utiliser un port aléatoire disponible
+
 # Licence
 
 Ce logiciel est concédé sous [licence EUPL, version 1.2 uniquement](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).

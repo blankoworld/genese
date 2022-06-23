@@ -7,6 +7,12 @@
 # Profil par défaut pour créer des instances
 PROFIL="defaut"
 
+# Répertoire dans lequel seront installées les instances
+REP_INSTANCES="${REP_INSTANCES:-./instances}"
+
+# Liste des services trouvés
+LISTE_SERVICES=()
+
 ####
 ## FONCTIONS
 ###
@@ -85,6 +91,43 @@ charger_profil() {
 
   # Listing des services trouvés
   lister_services  
+}
+
+# Installe le profil donné en argument.
+# 1: Nom du profil situé dans le dossier ./profils
+installer_profil() {
+  # Répertoire de l'instance
+  REP_BASE="${REP_INSTANCES}/${PROFIL}"
+
+  # Vérification de la présence du dossier
+  if [[ ! -d "${REP_BASE}" ]]; then
+    mkdir -p "${REP_BASE}" && msg_succes "Création répertoire '${REP_BASE}'"
+  fi
+
+  ####
+  ## Création du fichier docker-compose.yml
+  ###
+
+  # fichier final
+  fichier_docker="${REP_BASE}/docker-compose.yml"
+
+  # entête du fichier final
+  cat "./modeles/entete.yml" > "${fichier_docker}"
+
+  # ajout de chacun des services
+  for service in ${LISTE_SERVICES[@]}; do
+    fichier_service="./services/${service}/description.yml"
+
+    # contrôle existance du fichier de description du service
+    if [[ ! -f "${fichier_service}" ]]; then
+      msg_erreur_exit "Le fichier ${fichier_service} n'existe pas !"
+    fi
+
+    # concaténation du contenu avec le fichier final
+    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${fichier_docker}"
+  done
+
+  msg_succes "Création ${fichier_docker}"
 }
 
 # vim: ts=2 sw=2 et nu syn=bash
