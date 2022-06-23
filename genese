@@ -84,7 +84,7 @@ do
         PROFIL="${2}"
       fi
       charger_profil "${PROFIL}"
-      installer_profil "${PROFIL}"
+      creer_instance "${PROFIL}"
       ;;
     -s | --supprime)
       if [[ -n "${2}" ]]; then

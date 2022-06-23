@@ -99,22 +99,24 @@ charger_profil() {
   lister_services  
 }
 
-# Installe le profil donné en argument.
+# Créé une instance à partir du profil donné en argument.
 # 1: Nom du profil situé dans le dossier ./profils
-installer_profil() {
+creer_instance() {
   # Répertoire de l'instance
-  REP_BASE="${REP_INSTANCES}/${PROFIL}"
+  instance="${REP_INSTANCES}/${PROFIL}"
 
   # Vérification de la présence du dossier
-  if [[ ! -d "${REP_BASE}" ]]; then
-    mkdir -p "${REP_BASE}" && msg_succes "Création répertoire '${REP_BASE}'"
+  if [[ ! -d "${instance}" ]]; then
+    mkdir -p "${instance}" && msg_succes "Création répertoire '${instance}'"
   fi
 
+  # TODO: si le dossier existait déjà, il faut couper les conteneurs
+
   # Création du fichier docker-compose.yml
-  creer_fichier_docker_compose "${REP_BASE}"
+  creer_fichier_docker_compose "${instance}"
 
   # Démarrage des conteneurs Docker
-  demarre_conteneurs "${REP_BASE}"
+  demarre_conteneurs "${instance}"
 }
 
 # Listing des instances installées
