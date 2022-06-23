@@ -13,6 +13,8 @@ PROFIL="${PROFIL:-defaut}"
 
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-./instances}"
+# Répertoire dans lequel trouver les profils
+REP_PROFILS="${REP_PROFILS:-./profils}"
 
 # Liste des services trouvés
 LISTE_SERVICES=()
@@ -66,7 +68,7 @@ decouverte_services() {
 lister_profils() {
   detection=false
 
-  for profil in `ls ./profils`; do
+  for profil in `ls "${REP_PROFILS}"`; do
     # Exclusion du profil commun
     if [[ "${profil}" != "commun" ]]; then
       msg "${profil}"

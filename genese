@@ -13,6 +13,7 @@ PROGRAMME=`basename $0 .sh`
 
 # Répertoire dans lequel trouver les services
 REP_SERVICES="${REP_SERVICES:-./services}"
+# Nom du fichier utilisé pour décrire un service
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
 
 # Dépôt d'origine à télécharger
