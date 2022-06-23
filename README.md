@@ -39,7 +39,7 @@ bash genese
 Options disponibles : 
 
 - `-h`, `--help` : Affichage de l'aide contextuelle
-- `-l`, `--list` : Liste des profils disponibles
+- `-l`, `--liste` : Liste des profils disponibles
 - `-p <profil>`, `--profil <profil>` : Utilise le profil `<profil>` comme base de déploiement
 
 # Variables d'environnement

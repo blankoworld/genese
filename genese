@@ -23,9 +23,9 @@ read -d '' UTILISATION << EOF
 Utilisation : ${PROGRAMME} [options]
 
 OPTIONS
-  -l, --list                Liste des profils disponibles
-  -h, --help                Affichage de l'aide contextuelle
-  -p, --profil <profil>     Utilisation du profil
+  -l, --liste                     Liste des profils disponibles
+  -h, --help                      Affichage de l'aide contextuelle
+  -p <profil>, --profil <profil>  Utilisation du profil
 
 EXEMPLE
 
@@ -72,7 +72,7 @@ do
       charger_profil "${PROFIL}"
       installer_profil "${PROFIL}"
       ;;
-      -l | --list)
+      -l | --liste)
       lister_profils
       ;;
       # Aide contextuelle
