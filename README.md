@@ -41,7 +41,8 @@ Options disponibles :
 - `-h`, `--help` : Affichage de l'aide contextuelle
 - `-i`, `--instance` : Liste des instances installées
 - `-l`, `--liste` : Liste des profils disponibles
-- `-p <profil>`, `--profil <profil>` : Utilise le profil `<profil>` comme base de déploiement
+- `-p <nom>`, `--profil <nom>` : Utilise le profil `<nom>` comme base de déploiement
+- `-s <nom>`, `--supprime <nom>` : Supprime l'instance `<nom>`
 
 # Variables d'environnement
 

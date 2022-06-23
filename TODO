@@ -1,6 +1,5 @@
 # TODO
 
-* suppression d'une instance (dossier instancié)
 * pour chaque service : 
   * script d'exécution pré docker up
   * script post docker up

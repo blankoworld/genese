@@ -24,10 +24,11 @@ read -d '' UTILISATION << EOF
 Utilisation : ${PROGRAMME} [options]
 
 OPTIONS
-  -h, --help                      Affichage de l'aide contextuelle
-  -i, --instance                  Liste des instances installées
-  -l, --liste                     Liste des profils disponibles
-  -p <profil>, --profil <profil>  Utilisation du profil
+  -h, --help                  Affichage de l'aide contextuelle
+  -i, --instance              Liste des instances installées
+  -l, --liste                 Liste des profils disponibles
+  -p <nom>, --profil <nom>    Utilisation du profil donné
+  -s <nom>, --supprime <nom>  Suppression de l'instance donnée
 
 EXEMPLE
 
@@ -48,6 +49,7 @@ aide() {
 ## ARGUMENTS
 ###
 
+# Pas d'argument ? Aide contextuelle et on quitte
 [ "$#" -lt 1 ] && aide && exit 1
 
 #####
@@ -67,23 +69,31 @@ source "./bibliotheques/profils"
 while [[ "$#" -gt 0 ]]
 do
   case "$1" in
-      -i | --instance)
+    # Aide contextuelle
+    -h | --help)
+      aide
+	    ;;
+    -i | --instance)
       lister_instances
       ;;
-      -l | --liste)
+    -l | --liste)
       lister_profils
       ;;
-      -p | --profil)
+    -p | --profil)
       if [[ -n "${2}" ]]; then
         PROFIL="${2}"
       fi
       charger_profil "${PROFIL}"
       installer_profil "${PROFIL}"
       ;;
-      # Aide contextuelle
-      -h | --help)
-        aide
-	;;
+    -s | --supprime)
+      if [[ -n "${2}" ]]; then
+        instance="${2}"
+      else
+        msg_erreur_exit "Aucune instance donnée en paramètre !"
+      fi
+      supprimer_instance "${instance}"
+      ;;
   esac
   shift
 done

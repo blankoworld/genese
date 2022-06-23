@@ -134,4 +134,19 @@ lister_instances() {
   fi
 }
 
+# Supprime l'instance donnée
+# 1: Nom de l'instance
+supprimer_instance() {
+  instance="${REP_INSTANCES}/${1}"
+
+  # Contrôle de l'existence de l'instance
+  if [[ ! -d "${instance}" ]]; then
+    msg_erreur_exit "Instance non trouvée : ${instance}"
+  fi
+
+  rm -rf "${instance}"
+
+  msg_succes "Instance supprimée avec succès : ${instance}"
+}
+
 # vim: ts=2 sw=2 et nu syn=bash
