@@ -48,4 +48,27 @@ creer_fichier_docker_compose() {
   msg_succes "Fichier Docker Compose: ${docker_compose}"
 }
 
+# Suppression des conteneurs liés au dossier donné (contenant un fichier
+# docker-compose.yml)
+# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
+suppression_conteneurs() {
+
+  repertoire="${1}"
+  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+
+  # Vérification contenu du répertoire
+  if [[ ! -f "${docker_compose}" ]]; then
+    msg_erreur_exit "Fichier Docker Compose non trouvé dans : ${repertoire}"
+  fi
+
+  # Arrêt des conteneurs Docker
+  docker compose -f "${docker_compose}" kill || msg_erreur_exit "Souci \
+avec Docker"
+  # Suppression des conteneurs
+  docker compose -f "${docker_compose}" down || msg_erreur_exit "Souci \
+avec Docker"
+
+  msg_succes "Arrêt des conteneurs Docker"
+}
+
 # vim: ts=2 sw=2 et nu syn=bash

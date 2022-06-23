@@ -158,11 +158,7 @@ supprimer_instance() {
       msg_info "Suppression de : ${instance}"
 
       # Extinction d'éventuels conteneurs lancés
-      docker_compose="${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
-      docker compose -f "${docker_compose}" kill || msg_erreur_exit "Souci \
-avec Docker"
-      docker compose -f "${docker_compose}" down || msg_erreur_exit "Souci \
-avec Docker"
+      suppression_conteneurs "${instance}"
 
       # Suppression de l'instance
       rm -rf "${instance}"
