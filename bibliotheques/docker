@@ -7,7 +7,9 @@
 ## VARIABLES
 ###
 
+# Nom du fichier Docker Compose final (pour l'instance)
 NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
+# Adresse de l'entête utilisée pour le fichier Docker Compose final
 ENTETE_DOCKER_COMPOSE="./modeles/entete.yml"
 
 #####

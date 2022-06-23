@@ -50,6 +50,7 @@ Options disponibles :
 
 L'utilisation de variables d'environnement permettent de personnaliser le comportement de l'outil.
 
+- `NOM_FICHIER_DOCKER_COMPOSE` : Nom du fichier Docker Compose final pour l'instance. Valeur par défaut : `docker-compose.yml`
 - `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `description.yml`
 - `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
