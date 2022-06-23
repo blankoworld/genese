@@ -9,7 +9,7 @@
 ###
 
 # Profil par défaut pour créer des instances
-PROFIL="defaut"
+PROFIL="${PROFIL:-defaut}"
 
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-./instances}"
