@@ -39,6 +39,7 @@ bash genese
 Options disponibles : 
 
 - `-h`, `--help` : Affichage de l'aide contextuelle
+- `-i`, `--instance` : Liste des instances installées
 - `-l`, `--liste` : Liste des profils disponibles
 - `-p <profil>`, `--profil <profil>` : Utilise le profil `<profil>` comme base de déploiement
 

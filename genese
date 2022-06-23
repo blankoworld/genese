@@ -24,8 +24,9 @@ read -d '' UTILISATION << EOF
 Utilisation : ${PROGRAMME} [options]
 
 OPTIONS
-  -l, --liste                     Liste des profils disponibles
   -h, --help                      Affichage de l'aide contextuelle
+  -i, --instance                  Liste des instances installées
+  -l, --liste                     Liste des profils disponibles
   -p <profil>, --profil <profil>  Utilisation du profil
 
 EXEMPLE
@@ -66,15 +67,18 @@ source "./bibliotheques/profils"
 while [[ "$#" -gt 0 ]]
 do
   case "$1" in
+      -i | --instance)
+      lister_instances
+      ;;
+      -l | --liste)
+      lister_profils
+      ;;
       -p | --profil)
       if [[ -n "${2}" ]]; then
         PROFIL="${2}"
       fi
       charger_profil "${PROFIL}"
       installer_profil "${PROFIL}"
-      ;;
-      -l | --liste)
-      lister_profils
       ;;
       # Aide contextuelle
       -h | --help)

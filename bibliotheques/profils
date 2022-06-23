@@ -114,4 +114,24 @@ installer_profil() {
   creer_fichier_docker_compose "${REP_BASE}"
 }
 
+# Listing des instances installées
+lister_instances() {
+  detection=false
+
+  msg_info "Liste des instances"
+
+  # Liste des dossiers du répertoire des instances
+  for instance in `ls "${REP_INSTANCES}"`; do
+    fichier="${REP_INSTANCES}/${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
+    if [[ -f "${fichier}" ]]; then
+      msg "  - ${REP_INSTANCES}/${instance}"
+      detection=true
+    fi
+  done
+
+  if ! ${detection}; then
+    msg_attention "Aucune instance trouvée."
+  fi
+}
+
 # vim: ts=2 sw=2 et nu syn=bash
