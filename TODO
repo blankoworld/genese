@@ -1,6 +1,5 @@
 # TODO
 
-* allumage des conteneurs Docker à l'installation d'un profil
 * git-chglog pour un CHANGELOG
 * pour chaque service : 
   * script d'exécution pré docker up

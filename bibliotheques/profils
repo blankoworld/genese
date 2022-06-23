@@ -112,6 +112,9 @@ installer_profil() {
 
   # Création du fichier docker-compose.yml
   creer_fichier_docker_compose "${REP_BASE}"
+
+  # Démarrage des conteneurs Docker
+  demarre_conteneurs "${REP_BASE}"
 }
 
 # Listing des instances installées

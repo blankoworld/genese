@@ -11,6 +11,8 @@
 NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
 # Adresse de l'entête utilisée pour le fichier Docker Compose final
 ENTETE_DOCKER_COMPOSE="./modeles/entete.yml"
+# Message d'erreur commun aux problèmes Docker
+MSG_ERR_DOCKER="Souci avec Docker"
 
 #####
 ## FONCTIONS
@@ -50,6 +52,40 @@ creer_fichier_docker_compose() {
   msg_succes "Fichier Docker Compose: ${docker_compose}"
 }
 
+# Test si le fichier Docker Compose existe, sinon retourne une erreur
+# 1: Fichier Docker Compose
+test_existence_fichier_compose() {
+  fichier="${1}"
+
+  if [[ -z "${fichier}" ]]; then
+    msg_erreur_exit "Aucun fichier Docker Compose fourni."
+  fi
+
+  # Si le fichier n'existe pas, on s'arrête !
+  if [[ ! -f "${fichier}" ]]; then
+    msg_erreur_exit "Fichier Docker Compose non trouvé : ${fichier}"
+  fi
+}
+
+# Démarrage des conteneurs liés au dossier donné (contenant un fichier
+# docker-compose.yml)
+# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
+demarre_conteneurs() {
+
+  repertoire="${1}"
+  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+
+  # Vérification que le fichier Docker Compose existe
+  test_existence_fichier_compose "${docker_compose}"
+
+  # Démarrage des conteneurs
+  msg_info "Démarrage des conteneurs Docker"
+  docker-compose -f "${docker_compose}" up -d || msg_erreur_exit \
+    "${MSG_ERR_DOCKER}"
+
+  msg_succes "Conteneurs Docker lancés"
+}
+
 # Suppression des conteneurs liés au dossier donné (contenant un fichier
 # docker-compose.yml)
 # 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
@@ -58,17 +94,15 @@ suppression_conteneurs() {
   repertoire="${1}"
   docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
 
-  # Vérification contenu du répertoire
-  if [[ ! -f "${docker_compose}" ]]; then
-    msg_erreur_exit "Fichier Docker Compose non trouvé dans : ${repertoire}"
-  fi
+  # Vérification que le fichier Docker Compose existe
+  test_existence_fichier_compose "${docker_compose}"
 
   # Arrêt des conteneurs Docker
-  docker compose -f "${docker_compose}" kill || msg_erreur_exit "Souci \
-avec Docker"
+  docker compose -f "${docker_compose}" kill || msg_erreur_exit \
+    "${MSG_ERR_DOCKER}"
   # Suppression des conteneurs
-  docker compose -f "${docker_compose}" down || msg_erreur_exit "Souci \
-avec Docker"
+  docker compose -f "${docker_compose}" down || msg_erreur_exit \
+    "${MSG_ERR_DOCKER}"
 
   msg_succes "Arrêt des conteneurs Docker"
 }
