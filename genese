@@ -11,6 +11,10 @@ PROGRAMME=`basename $0 .sh`
 ## VARIABLES
 ###
 
+# Répertoire dans lequel trouver les services
+REP_SERVICES="./services"
+NOM_FICHIER_SERVICE="description.yml"
+
 # Dépôt d'origine à télécharger
 SOURCE="git@github.com:blankoworld/genese.git"
 
@@ -54,6 +58,7 @@ aide() {
 
 # Chargement des bibliothèques
 source "./bibliotheques/commun"
+source "./bibliotheques/docker"
 source "./bibliotheques/profils"
 
 # Parcours des options

@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# Dépendance de cette bibliothèque : 
+# - commun
+# - docker
 
 #####
 ## VARIABLES
@@ -104,30 +108,8 @@ installer_profil() {
     mkdir -p "${REP_BASE}" && msg_succes "Création répertoire '${REP_BASE}'"
   fi
 
-  ####
-  ## Création du fichier docker-compose.yml
-  ###
-
-  # fichier final
-  fichier_docker="${REP_BASE}/docker-compose.yml"
-
-  # entête du fichier final
-  cat "./modeles/entete.yml" > "${fichier_docker}"
-
-  # ajout de chacun des services
-  for service in ${LISTE_SERVICES[@]}; do
-    fichier_service="./services/${service}/description.yml"
-
-    # contrôle existance du fichier de description du service
-    if [[ ! -f "${fichier_service}" ]]; then
-      msg_erreur_exit "Le fichier ${fichier_service} n'existe pas !"
-    fi
-
-    # concaténation du contenu avec le fichier final
-    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${fichier_docker}"
-  done
-
-  msg_succes "Création ${fichier_docker}"
+  # Création du fichier docker-compose.yml
+  creer_fichier_docker_compose "${REP_BASE}"
 }
 
 # vim: ts=2 sw=2 et nu syn=bash

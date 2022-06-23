@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Dépendance de cette bibliothèque : 
+# - commun
+
+#####
+## VARIABLES
+###
+
+NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
+ENTETE_DOCKER_COMPOSE="./modeles/entete.yml"
+
+#####
+## FONCTIONS
+###
+
+# Création du fichier docker-compose.yml dans le dossier donné
+# 1: Répertoire dans lequel créer le fichier docker-compose.yml
+creer_fichier_docker_compose() {
+
+  repertoire="${1}"
+
+  # contrôle du répertoire
+  if [[ -z "${repertoire}" ]]; then
+    msg_erreur_exit "Aucun répertoire donné"
+  elif [[ ! -d "${repertoire}" ]]; then
+    msg_erreur_exit "Répertoire non trouvé : ${repertoire}"
+  fi
+
+  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+
+  # entête du fichier final
+  cat "${ENTETE_DOCKER_COMPOSE}" > "${docker_compose}"
+
+  # ajout de chacun des services
+  for service in ${LISTE_SERVICES[@]}; do
+    fichier_service="${REP_SERVICES}/${service}/${NOM_FICHIER_SERVICE}"
+
+    # contrôle existance du fichier de description du service
+    if [[ ! -f "${fichier_service}" ]]; then
+      msg_erreur_exit "Le fichier ${fichier_service} n'existe pas !"
+    fi
+
+    # concaténation du contenu avec le fichier final
+    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${docker_compose}"
+  done
+
+  msg_succes "Fichier Docker Compose: ${docker_compose}"
+}
+
+# vim: ts=2 sw=2 et nu syn=bash
