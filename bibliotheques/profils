@@ -118,6 +118,10 @@ installer_profil() {
 lister_instances() {
   detection=false
 
+  if [[ ! -d "${REP_INSTANCES}" ]]; then
+    msg_erreur_exit "Répertoire d'instance manquant : ${REP_INSTANCES}"
+  fi
+
   msg_info "Liste des instances"
 
   # Liste des dossiers du répertoire des instances
