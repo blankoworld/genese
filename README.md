@@ -61,6 +61,18 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 
 - `PORT_ADMINER` : Port d'écoute du service Adminer. Si non renseigné, Docker utiliser un port aléatoire disponible
 
+# Fichier CHANGELOG.md
+
+Un fichier [CHANGELOG](./CHANGELOG.md) est disponible pour lister les différences depuis la dernière version.
+
+Pour le générer, veuillez installer [**git-chglog**](https://github.com/git-chglog/git-chglog).
+
+Pour mettre à jour le fichier CHANGELOG.md, il suffit d'exécuter la commande suivante : 
+
+```bash
+make changelog
+```
+
 # Licence
 
 Ce logiciel est concédé sous [licence EUPL, version 1.2 uniquement](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
