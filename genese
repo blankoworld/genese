@@ -27,12 +27,26 @@ OPTIONS
   -h, --help                  Affichage de l'aide contextuelle
   -i, --instance              Liste des instances installées
   -l, --liste                 Liste des profils disponibles
+  -n <nom>, --nom <nom>       Nom de l'instance à créer (s'utilise avec -p)
   -p <nom>, --profil <nom>    Utilisation du profil donné
   -s <nom>, --supprime <nom>  Suppression de l'instance donnée
 
-EXEMPLE
+EXEMPLES
 
+    # Afficher l'aide
     ${PROGRAMME} -h
+
+    # Créer une instance en utilisant le profil 'defaut'
+    ${PROGRAMME} -p defaut
+
+    # Créer une instance 'super_instance' en utilisant le profil 'defaut'
+    ${PROGRAMME} -p defaut -n super_instance
+
+    # Lister les instances ainsi créées
+    ${PROGRAMME} -i
+
+    # Supprimer l'instance nommée 'super_instance'
+    ${PROGRAMME} -s super_instance
 
 EOF
 
@@ -66,6 +80,9 @@ source "./bibliotheques/docker"
 source "./bibliotheques/portainer"
 source "./bibliotheques/profils"
 
+NOM_INSTANCE=""
+CREATION_INSTANCE=false
+
 # Parcours des options
 while [[ "$#" -gt 0 ]]
 do
@@ -80,14 +97,25 @@ do
     -l | --liste)
       lister_profils
       ;;
+    -n | --nom)
+      erreur_parametre="Aucun nom d'instance donné pour le paramètre '--nom'."
+      if [[ -n "${2}" ]]; then
+        # Vérification que l'argument ne démarre pas par un tiret ("-")
+        if [[ "${2}" == -* ]]; then
+          msg_erreur_exit "${erreur_parametre}"
+        fi
+        # Initialisation du nom de l'instance (choix fait par l'utilisateur)
+        NOM_INSTANCE="${2}"
+      else
+        msg_erreur_exit "${erreur_parametre}"
+      fi
+      ;;
     -p | --profil)
       if [[ -n "${2}" ]]; then
         PROFIL="${2}"
       fi
-      charger_profil "${PROFIL}"
-      creer_instance "${PROFIL}"
-      # Traitement post-installation
-      lancer_portainer
+      # Marqueur permettant de savoir qu'on souhaite lancer une création d'instance
+      CREATION_INSTANCE=true
       ;;
     -s | --supprime)
       if [[ -n "${2}" ]]; then
@@ -101,6 +129,16 @@ do
   shift
 done
 
+# Cas de la création d'une instance
+if "${CREATION_INSTANCE}"; then
+  charger_profil "${PROFIL}"
+  creer_instance "${NOM_INSTANCE:-$PROFIL}"
+  # Traitement post-installation
+  lancer_portainer
+elif [[ -n "${NOM_INSTANCE}" ]]; then
+  # Cas où l'utilisateur a donné le nom d'une instance, sans demandé la création d'une instance
+  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE}', mais aucun profil donné. Faites '${PROGRAMME} -l' pour lister les profils existants."
+fi
 
 #####
 ## FIN

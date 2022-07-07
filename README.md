@@ -41,6 +41,7 @@ Options disponibles :
 - `-h`, `--help` : Affichage de l'aide contextuelle
 - `-i`, `--instance` : Liste des instances installées
 - `-l`, `--liste` : Liste des profils disponibles
+- `-n`, `--nom` : Nom donné à l'instance à créer. Par défaut le même nom que le profil
 - `-p <nom>`, `--profil <nom>` : Utilise le profil `<nom>` comme base de déploiement
 - `-s <nom>`, `--supprime <nom>` : Supprime l'instance `<nom>`
 

@@ -103,7 +103,7 @@ charger_profil() {
 # 1: Nom du profil situé dans le dossier ./profils
 creer_instance() {
   # Répertoire de l'instance
-  instance="${REP_INSTANCES}/${PROFIL}"
+  instance="${REP_INSTANCES}/${1}"
 
   # Vérification de la présence du dossier
   if [[ ! -d "${instance}" ]]; then
