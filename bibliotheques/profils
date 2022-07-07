@@ -93,7 +93,7 @@ lister_services() {
 # 1: Nom du profil situé dans le dossier ./profils
 charger_profil() {
   # Découverte de l'ensemble des services associés au fichier fourni
-  decouverte_services "${PROFIL}"
+  decouverte_services "${1}"
 
   # Listing des services trouvés
   lister_services  
