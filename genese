@@ -59,6 +59,56 @@ aide() {
  echo -e "${UTILISATION}" 1>&2
 }
 
+# Parcours les options de la ligne de commande
+analyse_options() {
+  # Parcours seulement s'il y a des options
+  while [[ "$#" -gt 0 ]]
+  do
+    case "$1" in
+      # Aide contextuelle
+      -h | --help)
+        aide
+        ;;
+      -i | --instance)
+        lister_instances
+        ;;
+      -l | --liste)
+        lister_profils
+        ;;
+      -n | --nom)
+        erreur_parametre="Aucun nom d'instance donné pour le paramètre '--nom'."
+        if [[ -n "${2}" ]]; then
+          # Vérification que l'argument ne démarre pas par un tiret ("-")
+          if [[ "${2}" == -* ]]; then
+            msg_erreur_exit "${erreur_parametre}"
+          fi
+          # Initialisation du nom de l'instance (choix fait par l'utilisateur)
+          NOM_INSTANCE="${2}"
+        else
+          msg_erreur_exit "${erreur_parametre}"
+        fi
+        ;;
+      -p | --profil)
+        if [[ -n "${2}" ]]; then
+          PROFIL="${2}"
+        fi
+        # Marqueur permettant de savoir qu'on souhaite lancer une création d'instance
+        CREATION_INSTANCE=true
+        ;;
+      -s | --supprime)
+        if [[ -n "${2}" ]]; then
+          instance="${2}"
+        else
+          msg_erreur_exit "Aucune instance donnée en paramètre !"
+        fi
+        supprimer_instance "${instance}"
+        ;;
+    esac
+    # Décalage de l'option pour parcourir la suivante
+    shift
+  done
+}
+
 #####
 ## ARGUMENTS
 ###
@@ -84,50 +134,7 @@ NOM_INSTANCE=""
 CREATION_INSTANCE=false
 
 # Parcours des options
-while [[ "$#" -gt 0 ]]
-do
-  case "$1" in
-    # Aide contextuelle
-    -h | --help)
-      aide
-	    ;;
-    -i | --instance)
-      lister_instances
-      ;;
-    -l | --liste)
-      lister_profils
-      ;;
-    -n | --nom)
-      erreur_parametre="Aucun nom d'instance donné pour le paramètre '--nom'."
-      if [[ -n "${2}" ]]; then
-        # Vérification que l'argument ne démarre pas par un tiret ("-")
-        if [[ "${2}" == -* ]]; then
-          msg_erreur_exit "${erreur_parametre}"
-        fi
-        # Initialisation du nom de l'instance (choix fait par l'utilisateur)
-        NOM_INSTANCE="${2}"
-      else
-        msg_erreur_exit "${erreur_parametre}"
-      fi
-      ;;
-    -p | --profil)
-      if [[ -n "${2}" ]]; then
-        PROFIL="${2}"
-      fi
-      # Marqueur permettant de savoir qu'on souhaite lancer une création d'instance
-      CREATION_INSTANCE=true
-      ;;
-    -s | --supprime)
-      if [[ -n "${2}" ]]; then
-        instance="${2}"
-      else
-        msg_erreur_exit "Aucune instance donnée en paramètre !"
-      fi
-      supprimer_instance "${instance}"
-      ;;
-  esac
-  shift
-done
+analyse_options $@
 
 # Cas de la création d'une instance
 if "${CREATION_INSTANCE}"; then
