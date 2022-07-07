@@ -52,10 +52,13 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 
 - `NOM_FICHIER_DOCKER_COMPOSE` : Nom du fichier Docker Compose final pour l'instance. Valeur par défaut : `docker-compose.yml`
 - `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `description.yml`
+- `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
+- `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
 - `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./profils`
 - `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services`
+- `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 
 ## Concernant les exemples de services fournis
 

@@ -13,6 +13,8 @@ NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
 ENTETE_DOCKER_COMPOSE="./modeles/entete.yml"
 # Message d'erreur commun aux problèmes Docker
 MSG_ERR_DOCKER="Souci avec Docker"
+# Adresse du socket Docker
+SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
 
 #####
 ## FONCTIONS

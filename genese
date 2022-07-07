@@ -63,6 +63,7 @@ aide() {
 # Chargement des bibliothèques
 source "./bibliotheques/commun"
 source "./bibliotheques/docker"
+source "./bibliotheques/portainer"
 source "./bibliotheques/profils"
 
 # Parcours des options
@@ -85,6 +86,8 @@ do
       fi
       charger_profil "${PROFIL}"
       creer_instance "${PROFIL}"
+      # Traitement post-installation
+      lancer_portainer
       ;;
     -s | --supprime)
       if [[ -n "${2}" ]]; then

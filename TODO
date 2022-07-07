@@ -1,7 +1,10 @@
 # TODO
 
-* git-chglog pour un CHANGELOG
 * pour chaque service : 
+  * fichier contenant le dépôt à charger
   * script d'exécution pré docker up
   * script post docker up
   * script final
+* auto-chargement du script depuis un dépôt source
+* utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
+* vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)
