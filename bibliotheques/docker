@@ -88,6 +88,23 @@ demarre_conteneurs() {
   msg_succes "Conteneurs Docker lancés"
 }
 
+# Liste des conteneurs liés au dossier donné (contenant un fichier
+# docker-compose.yml)
+# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
+lister_conteneurs() {
+
+  repertoire="${1}"
+  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+
+  # Vérification que le fichier Docker Compose existe
+  test_existence_fichier_compose "${docker_compose}"
+
+  # Liste des conteneurs
+  msg_info "Liste des conteneurs Docker lancés"
+  docker-compose -f "${docker_compose}" ps || msg_erreur_exit \
+    "${MSG_ERR_DOCKER}"
+}
+
 # Suppression des conteneurs liés au dossier donné (contenant un fichier
 # docker-compose.yml)
 # 1: Répertoire dans lequel se trouve le fichier docker-compose.yml

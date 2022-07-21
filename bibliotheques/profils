@@ -19,6 +19,10 @@ REP_PROFILS="${REP_PROFILS:-./profils}"
 # Liste des services trouvés
 LISTE_SERVICES=()
 
+# Nom des différents déclencheurs pre/post docker, build, etc.
+NOM_DECLENCHEUR_PRE_DOCKER="${NOM_DECLENCHEUR_PRE_DOCKER:-z_pre_docker}"
+NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-z_post_docker}"
+
 ####
 ## FONCTIONS
 ###
@@ -64,6 +68,18 @@ decouverte_services() {
   fi
 }
 
+# Exécute le script donné en paramètre pour chaque service
+# 1: nom du fichier à exécuter dans le service
+executer_script_services() {
+  if [[ -n "${1}" ]]; then
+    # On exécute le script donné pour l'ensemble des services fournis
+    for service in ${LISTE_SERVICES[@]}; do
+      local fichier="${REP_SERVICES}/${service}/${1}"
+      executer_script "${fichier}" "Service ${service} : exécution script '${1}'"
+    done
+  fi
+}
+
 # Liste des profils disponibles comme base pour les instances
 lister_profils() {
   detection=false
@@ -103,7 +119,7 @@ charger_profil() {
 # 1: Nom du profil situé dans le dossier ./profils
 creer_instance() {
   # Répertoire de l'instance
-  instance="${REP_INSTANCES}/${1}"
+  local instance="${REP_INSTANCES}/${1}"
 
   # Vérification de la présence du dossier
   if [[ ! -d "${instance}" ]]; then
@@ -115,8 +131,20 @@ creer_instance() {
   # Création du fichier docker-compose.yml
   creer_fichier_docker_compose "${instance}"
 
+  # TODO: Lancement de la commande "build" de Docker Compose
+  # TODO: AVANT la commande build, exécuter les scripts
+  # "declencheur_pre_docker_build" si existant
+
+  # Lancement du script "declencheur_pre_docker" s'il existe dans
+  # le dossier d'un service
+  executer_script_services "${NOM_DECLENCHEUR_PRE_DOCKER}"
+
   # Démarrage des conteneurs Docker
   demarre_conteneurs "${instance}"
+
+  # Lancement du script "declencheur_post_docker" s'il existe dans
+  # le dossier d'un service
+  executer_script_services "${NOM_DECLENCHEUR_POST_DOCKER}"
 }
 
 # Listing des instances installées
@@ -146,8 +174,8 @@ lister_instances() {
 # Supprime l'instance donnée
 # 1: Nom de l'instance
 supprimer_instance() {
-  nom_instance="${1}"
-  instance="${REP_INSTANCES}/${nom_instance}"
+  local nom_instance="${1}"
+  local instance="${REP_INSTANCES}/${nom_instance}"
 
   # Contrôle de l'existence de l'instance
   if [[ ! -d "${instance}" ]]; then

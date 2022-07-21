@@ -58,4 +58,24 @@ msg_debug() {
   fi
 }
 
+# Exécute le script donné en paramètre, si le fichier existe
+# 1: Script à exécuter
+# 2: (optionnel) Message pre-exécution
+# 3: (optionnel) Message post-exécution
+executer_script() {
+  # Aucune action si le fichier n'existe pas
+  if [[ -f "${1}" ]]; then
+    # Message pre-exécution
+    if [[ -n "${2}" ]]; then
+      msg_info "${2}"
+    fi
+    # Exécution
+    source "${1}"
+    # Message post-exécution
+    if [[ -n "${3}" ]]; then
+      msg_info "${3}"
+    fi
+  fi
+}
+
 # vim: ts=2 sw=2 et nu syn=bash

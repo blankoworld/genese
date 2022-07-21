@@ -15,6 +15,8 @@ PROGRAMME=`basename $0 .sh`
 REP_SERVICES="${REP_SERVICES:-./services}"
 # Nom du fichier utilisé pour décrire un service
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
+# Nom du déclencheur d'affichage des messages après installation
+NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
 
 # Dépôt d'origine à télécharger
 SOURCE="git@github.com:blankoworld/genese.git"
@@ -83,7 +85,7 @@ analyse_options() {
             msg_erreur_exit "${erreur_parametre}"
           fi
           # Initialisation du nom de l'instance (choix fait par l'utilisateur)
-          NOM_INSTANCE="${2}"
+          NOM_INSTANCE_CHOISI="${2}"
         else
           msg_erreur_exit "${erreur_parametre}"
         fi
@@ -97,7 +99,7 @@ analyse_options() {
         ;;
       -s | --supprime)
         if [[ -n "${2}" ]]; then
-          instance="${2}"
+          local instance="${2}"
         else
           msg_erreur_exit "Aucune instance donnée en paramètre !"
         fi
@@ -107,6 +109,23 @@ analyse_options() {
     # Décalage de l'option pour parcourir la suivante
     shift
   done
+}
+
+# Affichage du message final après création d'une instance
+# - nécessite la bibliothèque 'docker'
+# 1: Nom de l'instance choisie
+message_post_creation_instance() {
+  # adresse du répertoire de l'instance
+  local instance="${REP_INSTANCES}/${1}"
+
+  # Liste des conteneurs de l'instance choisie
+  lister_conteneurs "${instance}"
+
+  # Exécution pour chaque service du fichier 'declencheur_message_final'
+  # s'il existe.
+  executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
+
+  msg_succes "${1} : Installation terminée."
 }
 
 #####
@@ -130,7 +149,11 @@ source "./bibliotheques/docker"
 source "./bibliotheques/portainer"
 source "./bibliotheques/profils"
 
+# Nom de l'instance à utiliser
 NOM_INSTANCE=""
+# Nom choisi par l'utilisateur pour une instance
+NOM_INSTANCE_CHOISI=""
+# À défaut, pas de création d'instance
 CREATION_INSTANCE=false
 
 # Parcours des options
@@ -139,12 +162,16 @@ analyse_options $@
 # Cas de la création d'une instance
 if "${CREATION_INSTANCE}"; then
   charger_profil "${PROFIL}"
-  creer_instance "${NOM_INSTANCE:-$PROFIL}"
+  NOM_INSTANCE="${NOM_INSTANCE_CHOISI:-$PROFIL}"
+  creer_instance "${NOM_INSTANCE}"
   # Traitement post-installation
   lancer_portainer
-elif [[ -n "${NOM_INSTANCE}" ]]; then
-  # Cas où l'utilisateur a donné le nom d'une instance, sans demandé la création d'une instance
-  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE}', mais aucun profil donné. Faites '${PROGRAMME} -l' pour lister les profils existants."
+  # Affichage du message final d'installation pour l'instance choisie
+  message_post_creation_instance "${NOM_INSTANCE}"
+elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then
+  # Cas où l'utilisateur a donné le nom d'une instance, sans demander
+  # la création d'une instance
+  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE_CHOISI}', mais aucun profil donné. Faites '${PROGRAMME} -l' pour lister les profils existants."
 fi
 
 #####
