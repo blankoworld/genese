@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+adminer_port=`docker-compose -f "${FICHIER_DOCKER_COMPOSE}" port adminer 8080 |cut -d ":" -f 2`
+
+msg_info "Pour accéder à Adminer, allez sur http://localhost:${adminer_port}/"

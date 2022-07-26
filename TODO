@@ -5,6 +5,5 @@
 * auto-chargement du script depuis un dépôt source
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
 * vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)
-* Réflexion au sujet de la possibilité de récupérer/forker le projet et en pouvant utiliser des dossiers services/profils différent. Puis mettre à jour régulièrement sans casser le fonctionnement de son propre fork
+* Réflexion au sujet de la possibilité de récupérer/forker le projet et en pouvant utiliser des dossiers services/profils différent. Puis mettre à jour régulièrement sans casser le fonctionnement de son propre fork : utiliser un .env, ajouté au .gitignore et le charger s'il existe ?
 * Encart "Fonctionnement" dans le README pour expliquer concrètement ce qui se lance et dans quel ordre (pour saisir comment on peut utiliser cet outil)
-* Utiliser une variable globale pour l'adresse exacte du fichier docker-compose.yml afin de l'utiliser dans les fichiers déclencheurs qui exécutent des commandes

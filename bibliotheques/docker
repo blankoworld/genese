@@ -16,27 +16,44 @@ MSG_ERR_DOCKER="Souci avec Docker"
 # Adresse du socket Docker
 SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
 
+
+# Adresse du fichier docker-compose.yml. Cette variable est nécessaire pour
+# permettre aux multiples scripts des différents scripts d'y accéder.
+FICHIER_DOCKER_COMPOSE=""
+
 #####
 ## FONCTIONS
 ###
+
+# Initialisation de la variable globale contenant l'adresse du fichier
+# docker-compose.yml
+# 1: Répertoire duquel construire la variable
+initialisation_variable_docker_compose() {
+  # On ne créé du contenu pour la variable que si elle n'a jamais été remplie.
+  if [[ -z "${FICHIER_DOCKER_COMPOSE}" ]]; then
+    local debut_adresse=""
+    if [[ -n "${1}" ]]; then
+      debut_adresse="${1}/"
+    fi
+    FICHIER_DOCKER_COMPOSE="${debut_adresse}${NOM_FICHIER_DOCKER_COMPOSE}"
+  fi
+}
 
 # Création du fichier docker-compose.yml dans le dossier donné
 # 1: Répertoire dans lequel créer le fichier docker-compose.yml
 creer_fichier_docker_compose() {
 
-  repertoire="${1}"
-
   # contrôle du répertoire
-  if [[ -z "${repertoire}" ]]; then
+  if [[ -z "${1}" ]]; then
     msg_erreur_exit "Aucun répertoire donné"
-  elif [[ ! -d "${repertoire}" ]]; then
-    msg_erreur_exit "Répertoire non trouvé : ${repertoire}"
+  elif [[ ! -d "${1}" ]]; then
+    msg_erreur_exit "Répertoire non trouvé : ${1}"
   fi
 
-  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+  initialisation_variable_docker_compose "${1}"
 
   # entête du fichier final
-  cat "${ENTETE_DOCKER_COMPOSE}" > "${docker_compose}"
+  cat "${ENTETE_DOCKER_COMPOSE}" > "${FICHIER_DOCKER_COMPOSE}"
 
   # ajout de chacun des services
   for service in ${LISTE_SERVICES[@]}; do
@@ -48,10 +65,10 @@ creer_fichier_docker_compose() {
     fi
 
     # concaténation du contenu avec le fichier final
-    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${docker_compose}"
+    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${FICHIER_DOCKER_COMPOSE}"
   done
 
-  msg_succes "Fichier Docker Compose: ${docker_compose}"
+  msg_succes "Fichier Docker Compose: ${FICHIER_DOCKER_COMPOSE}"
 }
 
 # Test si le fichier Docker Compose existe, sinon retourne une erreur
@@ -74,15 +91,14 @@ test_existence_fichier_compose() {
 # 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
 demarre_conteneurs() {
 
-  repertoire="${1}"
-  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+  initialisation_variable_docker_compose "${1}"
 
   # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${docker_compose}"
+  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
 
   # Démarrage des conteneurs
   msg_info "Démarrage des conteneurs Docker"
-  docker-compose -f "${docker_compose}" up -d || msg_erreur_exit \
+  docker-compose -f "${FICHIER_DOCKER_COMPOSE}" up -d || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 
   msg_succes "Conteneurs Docker lancés"
@@ -93,15 +109,14 @@ demarre_conteneurs() {
 # 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
 lister_conteneurs() {
 
-  repertoire="${1}"
-  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+  initialisation_variable_docker_compose "${1}"
 
   # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${docker_compose}"
+  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
 
   # Liste des conteneurs
   msg_info "Liste des conteneurs Docker lancés"
-  docker-compose -f "${docker_compose}" ps || msg_erreur_exit \
+  docker-compose -f "${FICHIER_DOCKER_COMPOSE}" ps || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 }
 
@@ -110,17 +125,16 @@ lister_conteneurs() {
 # 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
 suppression_conteneurs() {
 
-  repertoire="${1}"
-  docker_compose="${repertoire}/${NOM_FICHIER_DOCKER_COMPOSE}"
+  initialisation_variable_docker_compose "${1}"
 
   # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${docker_compose}"
+  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
 
   # Arrêt des conteneurs Docker
-  docker compose -f "${docker_compose}" kill || msg_erreur_exit \
+  docker compose -f "${FICHIER_DOCKER_COMPOSE}" kill || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
   # Suppression des conteneurs
-  docker compose -f "${docker_compose}" down || msg_erreur_exit \
+  docker compose -f "${FICHIER_DOCKER_COMPOSE}" down || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 
   msg_succes "Arrêt des conteneurs Docker"
