@@ -84,10 +84,12 @@ executer_script_services() {
 lister_profils() {
   detection=false
 
+  msg_info "Liste des profils"
+
   for profil in `ls "${REP_PROFILS}"`; do
     # Exclusion du profil commun
     if [[ "${profil}" != "commun" ]]; then
-      msg "${profil}"
+      msg "  - ${profil}"
       detection=true
     fi
   done
