@@ -17,6 +17,9 @@ REP_SERVICES="${REP_SERVICES:-./services}"
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
 # Nom du déclencheur d'affichage des messages après installation
 NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
+# Répertoire dans lequel trouver les modèles (template) pour un certain
+# nombre de fichiers. Volontairement non modifiable par variable d'env.
+REP_MODELES="${REP_BASE}/modeles"
 
 # Dépôt d'origine à télécharger
 SOURCE="git@github.com:blankoworld/genese.git"
