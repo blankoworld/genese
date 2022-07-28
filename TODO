@@ -1,8 +1,11 @@
 # TODO
 
+* utiliser une variable pour le dossier principal dans lequel se trouve l'application, par exemple REP_BASE
 * pour chaque service : 
   * fichier contenant le dépôt à charger (origine/source/autre ?)
 * auto-chargement du script depuis un dépôt source
+* possibilité de "couper" la mise à jour automatique du script au début (avec une var. d'env.)
+* chargement de fichiers spécifiques au service dans un répertoire (par exemple extras ou fichiers, etc.)
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
 * vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)
 * Réflexion au sujet de la possibilité de récupérer/forker le projet et en pouvant utiliser des dossiers services/profils différent. Puis mettre à jour régulièrement sans casser le fonctionnement de son propre fork : utiliser un .env, ajouté au .gitignore et le charger s'il existe ?
