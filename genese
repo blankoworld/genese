@@ -6,13 +6,14 @@
 #
 
 PROGRAMME=`basename $0 .sh`
+REP_BASE=$(cd `dirname $0` && pwd)
 
 #####
 ## VARIABLES
 ###
 
 # Répertoire dans lequel trouver les services
-REP_SERVICES="${REP_SERVICES:-./services}"
+REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services}"
 # Nom du fichier utilisé pour décrire un service
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
 # Nom du déclencheur d'affichage des messages après installation
@@ -147,10 +148,10 @@ message_post_creation_instance() {
 ###
 
 # Chargement des bibliothèques
-source "./bibliotheques/commun"
-source "./bibliotheques/docker"
-source "./bibliotheques/portainer"
-source "./bibliotheques/profils"
+source "${REP_BASE}/bibliotheques/commun"
+source "${REP_BASE}/bibliotheques/docker"
+source "${REP_BASE}/bibliotheques/portainer"
+source "${REP_BASE}/bibliotheques/profils"
 
 # Nom de l'instance à utiliser
 NOM_INSTANCE=""

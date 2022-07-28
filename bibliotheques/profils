@@ -12,9 +12,9 @@
 PROFIL="${PROFIL:-defaut}"
 
 # Répertoire dans lequel seront installées les instances
-REP_INSTANCES="${REP_INSTANCES:-./instances}"
+REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
 # Répertoire dans lequel trouver les profils
-REP_PROFILS="${REP_PROFILS:-./profils}"
+REP_PROFILS="${REP_PROFILS:-${REP_BASE}/profils}"
 
 # Liste des services trouvés
 LISTE_SERVICES=()
@@ -29,12 +29,12 @@ NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-z_post_docker}"
 
 # Découvre les services associés dans le fichier fourni
 # Fonction récursive
-# 1: Nom du profil situé dans le dossier ./profils
+# 1: Nom du profil situé dans le dossier REP_PROFILS
 decouverte_services() {
-  fichier="./profils/${1}"
+  fichier="${REP_PROFILS}/${1}"
 
   # Interruption si profil non trouvé.
-  if [[ ! -f "./profils/${1}" ]]; then
+  if [[ ! -f "${REP_PROFILS}/${1}" ]]; then
     msg_erreur_exit "Profil '${1}' non trouvé !"
   fi
 
@@ -108,7 +108,7 @@ lister_services() {
 
 
 # Traite le chargement d'un profil
-# 1: Nom du profil situé dans le dossier ./profils
+# 1: Nom du profil situé dans le dossier REP_PROFILS
 charger_profil() {
   # Découverte de l'ensemble des services associés au fichier fourni
   decouverte_services "${1}"
@@ -118,7 +118,7 @@ charger_profil() {
 }
 
 # Créé une instance à partir du profil donné en argument.
-# 1: Nom du profil situé dans le dossier ./profils
+# 1: Nom du profil situé dans le dossier REP_PROFILS
 creer_instance() {
   # Répertoire de l'instance
   local instance="${REP_INSTANCES}/${1}"

@@ -68,6 +68,26 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 
 - `PORT_ADMINER` : Port d'écoute du service Adminer. Si non renseigné, Docker utiliser un port aléatoire disponible
 
+## Générées par l'application
+
+Certaines variables sont générées par l'application, donc non modifiables au lancement de l'application.
+
+En revanche elles peuvent être utilisées dans les scripts - dits déclencheurs - fournis par les services.
+
+Voici une liste non exhaustive des variables disponibles : 
+
+- `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
+- `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
+- `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
+- `LISTE_SERVICES` : tableau contenant la liste des services trouvés dans le profil choisi par l'utilisateur.
+- `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom du profil, sauf si l'utilisateur a choisi un nom spécifique)
+- `PROFIL` : nom du profil choisi par l'utilisateur
+- `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
+- `REP_BASE` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
+- `REP_MODELES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
+- `SOURCE` : dépôt Git où trouver l'application `genese`.
+
+
 # Fichier CHANGELOG.md
 
 Un fichier [CHANGELOG](./CHANGELOG.md) est disponible pour lister les différences depuis la dernière version.
