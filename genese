@@ -103,11 +103,12 @@ analyse_options() {
         ;;
       -s | --supprime)
         if [[ -n "${2}" ]]; then
-          local instance="${2}"
+          # Nom de l'instance à supprimer
+          NOM_INSTANCE="${2}"
         else
           msg_erreur_exit "Aucune instance donnée en paramètre !"
         fi
-        supprimer_instance "${instance}"
+        supprimer_instance "${NOM_INSTANCE}"
         ;;
     esac
     # Décalage de l'option pour parcourir la suivante
@@ -117,13 +118,10 @@ analyse_options() {
 
 # Affichage du message final après création d'une instance
 # - nécessite la bibliothèque 'docker'
-# 1: Nom de l'instance choisie
 message_post_creation_instance() {
-  # adresse du répertoire de l'instance
-  local instance="${REP_INSTANCES}/${1}"
-
   # Liste des conteneurs de l'instance choisie
-  lister_conteneurs "${instance}"
+  # REP_INSTALLATION a été créé dans creer_instance
+  lister_conteneurs "${REP_INSTALLATION}"
 
   # Exécution pour chaque service du fichier 'declencheur_message_final'
   # s'il existe.
@@ -171,7 +169,7 @@ if "${CREATION_INSTANCE}"; then
   # Traitement post-installation
   lancer_portainer
   # Affichage du message final d'installation pour l'instance choisie
-  message_post_creation_instance "${NOM_INSTANCE}"
+  message_post_creation_instance
 elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then
   # Cas où l'utilisateur a donné le nom d'une instance, sans demander
   # la création d'une instance

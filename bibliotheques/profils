@@ -15,6 +15,8 @@ PROFIL="${PROFIL:-defaut}"
 REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
 # Répertoire dans lequel trouver les profils
 REP_PROFILS="${REP_PROFILS:-${REP_BASE}/profils}"
+# Répertoire d'installation de l'instance (soit pour la création, soit pour la suppression). Initialisé quand nécessaire.
+REP_INSTALLATION=""
 
 # Liste des services trouvés
 LISTE_SERVICES=()
@@ -121,17 +123,17 @@ charger_profil() {
 # 1: Nom du profil situé dans le dossier REP_PROFILS
 creer_instance() {
   # Répertoire de l'instance
-  local instance="${REP_INSTANCES}/${1}"
+  REP_INSTALLATION="${REP_INSTANCES}/${1}"
 
   # Vérification de la présence du dossier
-  if [[ ! -d "${instance}" ]]; then
-    mkdir -p "${instance}" && msg_succes "Création répertoire '${instance}'"
+  if [[ ! -d "${REP_INSTALLATION}" ]]; then
+    mkdir -p "${REP_INSTALLATION}" && msg_succes "Création répertoire '${REP_INSTALLATION}'"
   fi
 
   # TODO: si le dossier existait déjà, il faut couper les conteneurs
 
   # Création du fichier docker-compose.yml
-  creer_fichier_docker_compose "${instance}"
+  creer_fichier_docker_compose "${REP_INSTALLATION}"
 
   # TODO: Lancement de la commande "build" de Docker Compose
   # TODO: AVANT la commande build, exécuter les scripts
@@ -142,7 +144,7 @@ creer_instance() {
   executer_script_services "${NOM_DECLENCHEUR_PRE_DOCKER}"
 
   # Démarrage des conteneurs Docker
-  demarre_conteneurs "${instance}"
+  demarre_conteneurs "${REP_INSTALLATION}"
 
   # Lancement du script "declencheur_post_docker" s'il existe dans
   # le dossier d'un service
@@ -176,29 +178,28 @@ lister_instances() {
 # Supprime l'instance donnée
 # 1: Nom de l'instance
 supprimer_instance() {
-  local nom_instance="${1}"
-  local instance="${REP_INSTANCES}/${nom_instance}"
+  REP_INSTALLATION="${REP_INSTANCES}/${1}"
 
   # Contrôle de l'existence de l'instance
-  if [[ ! -d "${instance}" ]]; then
-    msg_erreur_exit "Instance non trouvée : ${instance}"
+  if [[ ! -d "${REP_INSTALLATION}" ]]; then
+    msg_erreur_exit "Instance non trouvée : ${1} (dans ${REP_INSTALLATION})"
   fi
 
   # Alerte à l'utilisateur pour éviter les erreurs
-  msg_attention "Êtes-vous sûr de vouloir supprimer l'instance ${instance} ? (o/N)"
+  msg_attention "Êtes-vous sûr de vouloir supprimer l'instance ${REP_INSTALLATION} ? (o/N)"
   read reponse
 
   case "${reponse}" in
     o|O)
-      msg_info "Suppression de : ${instance}"
+      msg_info "Suppression de : ${REP_INSTALLATION}"
 
       # Extinction d'éventuels conteneurs lancés
-      suppression_conteneurs "${instance}"
+      suppression_conteneurs "${REP_INSTALLATION}"
 
       # Suppression de l'instance
-      rm -rf "${instance}"
+      rm -rf "${REP_INSTALLATION}"
 
-      msg_succes "Instance supprimée : ${1}"
+      msg_succes "Instance supprimée : ${1} (dans ${REP_INSTALLATION})"
       ;;
     *)
       msg_info "Aucune instance supprimée."
