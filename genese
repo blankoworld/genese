@@ -8,12 +8,18 @@
 PROGRAMME=`basename $0 .sh`
 REP_BASE=$(cd `dirname $0` && pwd)
 
+# Configuration par l'utilisateur ? Si oui, on charge !
+if [[ -f "${REP_BASE}/.env" ]]; then
+  # Charge la liste des variables d'env. personnalisées de l'utilisateur
+  source "${REP_BASE}/.env"
+fi
+
 #####
 ## VARIABLES
 ###
 
 # Répertoire dans lequel trouver les services
-REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services}"
+REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
 # Nom du fichier utilisé pour décrire un service
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
 # Nom du déclencheur d'affichage des messages après installation
@@ -150,6 +156,11 @@ source "${REP_BASE}/bibliotheques/commun"
 source "${REP_BASE}/bibliotheques/docker"
 source "${REP_BASE}/bibliotheques/portainer"
 source "${REP_BASE}/bibliotheques/profils"
+
+# On a besoin du répertoire des services
+if [[ ! -d "${REP_SERVICES}" ]]; then
+  msg_erreur_exit "Répertoire manquant : ${REP_SERVICES}"
+fi
 
 # Nom de l'instance à utiliser
 NOM_INSTANCE=""

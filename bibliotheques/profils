@@ -14,7 +14,7 @@ PROFIL="${PROFIL:-defaut}"
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
 # Répertoire dans lequel trouver les profils
-REP_PROFILS="${REP_PROFILS:-${REP_BASE}/profils}"
+REP_PROFILS="${REP_PROFILS:-${REP_BASE}/profils.exemple}"
 # Répertoire d'installation de l'instance (soit pour la création, soit pour la suppression). Initialisé quand nécessaire.
 REP_INSTALLATION=""
 
@@ -206,5 +206,19 @@ supprimer_instance() {
       ;;
   esac
 }
+
+#####
+## TESTS
+###
+
+# On a besoin du répertoire contenant les profils
+if [[ ! -d "${REP_PROFILS}" ]]; then
+  msg_erreur_exit "Répertoire manquant : ${REP_PROFILS}"
+fi
+
+# Création du répertoire des instances s'il n'existe pas
+if [[ ! -d "${REP_INSTANCES}" ]]; then
+  mkdir -p "${REP_INSTANCES}"
+fi
 
 # vim: ts=2 sw=2 et nu syn=bash

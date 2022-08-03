@@ -1,6 +1,6 @@
 # Présentation
 
-Ce dépôt a pour but de fournir un outil qui automatise la génération d'un nouvel environnement pour votre projet.
+Ce dépôt a pour but de fournir un outil qui permette de faciliter la création d'un script qui automatise la génération d'un nouvel environnement pour votre projet.
 
 Il s'appuie sur Docker Compose pour cela. La finalité est d'avoir un dossier contenant un environnement neuf pour votre projet avec un fichier docker-compose.yml qui lance les différents services nécessaires à celui-ci.
 
@@ -9,6 +9,8 @@ Même s'il permet de faciliter cette génération, il ne fait pas tout !
 En effet, vous décrivez chaque service que vous utilisez dans un dossier à cet effet. Puis vous crééez un profil qui liste les services nécessaires. Et enfin vous utilisez la commande de base pour générer en quelques minutes votre environnement.
 
 C'est un outil initialement fait pour des développeurs d'application, afin de leur faciliter la création d'un nouvel environnement de travail à chaque nouveau ticket, pour chaque développeur, pour chaque projet.
+
+Un exemple est donné dans les dossiers `profils.exemple` et `services.exemple`.
 
 # Prérequis
 
@@ -27,6 +29,16 @@ Ensuite rendez le script principal exécutable :
 ```bash
 chmod +x genese
 ```
+
+# Configuration
+
+Il est vivement conseillé de créer un fichier `.env` dont vous avez un exemple situé dans le fichier `.env.exemple`.
+
+```bash
+cp .env.exemple .env
+```
+
+Ce fichier `.env` va contenir la configuration de l'application, notamment concernant la localisation du répertoire contenant les profils et du répertoire contenant les services.
 
 # Utilisation
 
@@ -60,8 +72,8 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
-- `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./profils`
-- `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services`
+- `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./profils.exemple`
+- `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.exemple`
 - `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 
 ## Concernant les exemples de services fournis
