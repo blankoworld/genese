@@ -1,13 +1,13 @@
 # TODO
 
-* pour chaque service : 
-  * fichier contenant le dépôt à charger (origine/source/autre ?)
+* fichier .env persistant dans le dossier de l'instance avec les variables principales à utiliser (répertoire de travail, répertoire du launcher, socket Docker, COMPOSE_PROJECT_NAME pour avoir un nom)
 * auto-chargement du script depuis un dépôt source
 * possibilité de "couper" la mise à jour automatique du script au début (avec une var. d'env.)
-* chargement de fichiers spécifiques au service dans un répertoire (par exemple extras ou fichiers, etc.)
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
 * vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)
 * Encart "Fonctionnement" dans le README pour expliquer concrètement ce qui se lance et dans quel ordre (pour saisir comment on peut utiliser cet outil)
 * Documentation sur les fonctions disponibles à l'utilisateur pour ses scripts (msg_info, etc.)
 * Initialiser la variable de DEBUG
 * Ajouter une variable d'environnement pour choisir l'image Portainer qu'on souhaite utiliser
+* Permettre de surcharger n'importe quel nom de branche d'un dépôt en générant des variables XYZ_BRANCHE où XYZ est le nom du service. Exemple avec le service adminer : ADMINER_BRANCHE permet de surcharger le nom de la branche du service Adminer
+* Même idée de surcharge de variable avec XYZ_SOURCE ?

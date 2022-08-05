@@ -3,6 +3,7 @@
 # Dépendance de cette bibliothèque : 
 # - commun
 # - docker
+# - git
 
 #####
 ## VARIABLES
@@ -24,6 +25,16 @@ LISTE_SERVICES=()
 # Nom des différents déclencheurs pre/post docker, build, etc.
 NOM_DECLENCHEUR_PRE_DOCKER="${NOM_DECLENCHEUR_PRE_DOCKER:-z_pre_docker}"
 NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-z_post_docker}"
+
+# Nom du fichier contenant les informations du dépôt à télécharger
+NOM_FICHIER_SOURCE="${NOM_FICHIER_SOURCE:-source}"
+
+# Nom du dossier 'extras' contenant des fichiers à copier "tels quels" dans
+# le répertoire de destination
+NOM_DOSSIER_EXTRAS="${NOM_DOSSIER_EXTRAS:-extras}"
+
+# Messages d'erreurs
+ERR_400="La variable REP_INSTALLATION est vide."
 
 ####
 ## FONCTIONS
@@ -82,6 +93,63 @@ executer_script_services() {
   fi
 }
 
+# Extrait les infos données dans le fichier 'source' puis télécharge le dépôt
+# 1: nom du service étudié
+charger_depot_service() {
+  # Message d'erreur si on a pas de répertoire d'installation renseigné
+  if [[ -z "${REP_INSTALLATION}" ]]; then
+    msg_erreur_exit "${ERR_400}"
+  fi
+
+  # initialisation de variables
+  local service="${1}"
+  local fichier="${REP_SERVICES}/${service}/${NOM_FICHIER_SOURCE}"
+
+  # Chargement des informations si le fichier existe
+  if [[ -f "${fichier}" ]]; then
+    local branche=$(cat "${fichier}"|cut -d ' ' -f 1)
+    local adresse=$(cat "${fichier}"|cut -d ' ' -f 2-)
+    local destination="${REP_INSTALLATION}/${service}"
+
+    git_clone "${adresse}" "${branche}" "${destination}"
+  fi
+}
+
+# Charge les fichiers de chaque service dans le rép. d'installation.
+# Se fait en plusieurs étapes : 
+# 1/ d'abord on charge les dépôts Git de chaque service
+# 2/ ensuite on charge le dossier extras par dessus pour éventuellement écraser
+# les fichiers existants (sorte de "patch" qu'on choisit d'appliquer)
+charger_fichiers_services() {
+  # Si le répertoire d'installation n'est pas connu on renvoie une erreur.
+  if [[ -z "${REP_INSTALLATION}" ]]; then
+    msg_erreur_exit "${ERR_400}"
+  fi
+
+  # 1/ Chargement des dépôts Git de chaque service (uniquement si existant)
+  for service in ${LISTE_SERVICES[@]}; do
+    charger_depot_service "${service}"
+  done
+
+  # 2/ Écrasement éventuel des fichiers suivant le dossier "extras"
+  for service in ${LISTE_SERVICES[@]}; do
+    copier_extras_service "${service}"
+  done
+}
+
+# Copie l'ensemble des fichiers du dossier 'extras' dans le répertoire
+# d'installation (à la racine)
+# 1: Nom du service étudié
+copier_extras_service() {
+  local origine="${REP_SERVICES}/${service}/${NOM_DOSSIER_EXTRAS}"
+
+  if [[ -d "${origine}" ]]; then
+    msg_info "${service}: Copie des fichiers du dossier extras"
+    # On ajoute une étoile après les guillemets pour prendre tous les fichiers
+    cp -r "${origine}/"* "${REP_INSTALLATION}/"
+  fi
+}
+
 # Liste des profils disponibles comme base pour les instances
 lister_profils() {
   detection=false
@@ -121,6 +189,16 @@ charger_profil() {
 
 # Créé une instance à partir du profil donné en argument.
 # 1: Nom du profil situé dans le dossier REP_PROFILS
+# On va procéder en plusieurs étapes : 
+# - création du répertoire si besoin
+# - TODO: extinction de précédents conteneurs
+# - (re)création du fichier docker-compose.yml
+# - installation des fichiers nécessaires à l'instance
+# - TODO: déclencheur pour le script avant build Docker
+# - TODO: lancement du build Docker (pour éventuellement afficher une erreur)
+# - déclencheur pour le script avant le lancement des conteneurs Docker
+# - lancement des conteneurs
+# - déclencheur pour le script après le lancement des conteneurs Docker
 creer_instance() {
   # Répertoire de l'instance
   REP_INSTALLATION="${REP_INSTANCES}/${1}"
@@ -134,6 +212,10 @@ creer_instance() {
 
   # Création du fichier docker-compose.yml
   creer_fichier_docker_compose "${REP_INSTALLATION}"
+
+  # Avant de lancer quoique ce soit, on charge les fichiers "extras" dans le
+  # répertoire d'installation
+  charger_fichiers_services
 
   # TODO: Lancement de la commande "build" de Docker Compose
   # TODO: AVANT la commande build, exécuter les scripts

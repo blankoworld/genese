@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Dépendance de cette bibliothèque : 
+# - commun
+
+#####
+## FONCTIONS
+###
+
+# Récupère ou met à jour le dépôt Git fourni en paramètre 1, avec la 
+# branche en paramètre 2 sur le répertoire de destination fourni en
+# paramètre 3.
+# 1: adresse réticulaire du dépôt à récupérer (ou mettre à jour si existant)
+# 2: branche à récupérer
+# 3: destination où copier les fichiers
+git_clone() {
+  adresse="${1}"
+  branche="${2}"
+  destination="${3}"
+
+  # Si le répertoire existe, on met seulement à jour le dépôt
+  if [[ -d "${destination}" ]]; then
+    msg_info "Git : MàJ du dépôt ${destination}"
+    cd "${destination}" && git pull && cd - &>/dev/null
+  else
+    msg_info "Git : Clonage de '${adresse}' (branche : ${branche}) dans ${destination}"
+    git clone --branch="${branche}" "${adresse}" "${destination}" \
+      || msg_erreur_exit "git clone de '${adresse}' (branche : ${branche})"
+  fi
+}
+
+# vim: ts=2 sw=2 et nu syn=bash

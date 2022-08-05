@@ -153,6 +153,7 @@ message_post_creation_instance() {
 
 # Chargement des bibliothèques
 source "${REP_BASE}/bibliotheques/commun"
+source "${REP_BASE}/bibliotheques/git"
 source "${REP_BASE}/bibliotheques/docker"
 source "${REP_BASE}/bibliotheques/portainer"
 source "${REP_BASE}/bibliotheques/profils"

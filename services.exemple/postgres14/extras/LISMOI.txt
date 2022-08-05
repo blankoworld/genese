@@ -1,0 +1,5 @@
+Ce fichier provient de postgres14/extras/LISMOI.txt.
+
+Il a été copié tel quel dans le répertoire final de l'instance, après toute récupération éventuelle de dépôt, mais avant de lancer la création des conteneurs Docker.
+
+Ce fonctionnement est utile si on veut écraser des fichiers entiers : il suffit de reproduire l'arborescence des dossiers/fichiers qu'on souhaite écraser dans la destination et ils seront copiés tels quels.
