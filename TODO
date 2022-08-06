@@ -1,6 +1,5 @@
 # TODO
 
-* fichier .env persistant dans le dossier de l'instance avec les variables principales à utiliser (répertoire de travail, répertoire du launcher, socket Docker, COMPOSE_PROJECT_NAME pour avoir un nom)
 * auto-chargement du script depuis un dépôt source
 * possibilité de "couper" la mise à jour automatique du script au début (avec une var. d'env.)
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
@@ -11,3 +10,4 @@
 * Ajouter une variable d'environnement pour choisir l'image Portainer qu'on souhaite utiliser
 * Permettre de surcharger n'importe quel nom de branche d'un dépôt en générant des variables XYZ_BRANCHE où XYZ est le nom du service. Exemple avec le service adminer : ADMINER_BRANCHE permet de surcharger le nom de la branche du service Adminer
 * Même idée de surcharge de variable avec XYZ_SOURCE ?
+* étape de "build" des Docker en utilisant les variables d'environnement (--env-file)

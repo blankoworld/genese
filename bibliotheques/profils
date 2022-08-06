@@ -210,8 +210,8 @@ creer_instance() {
 
   # TODO: si le dossier existait déjà, il faut couper les conteneurs
 
-  # Création du fichier docker-compose.yml
-  creer_fichier_docker_compose "${REP_INSTALLATION}"
+  # Préparation de l'environnement docker (docker-compose.yml + .env)
+  creer_espace_docker "${REP_INSTALLATION}"
 
   # Avant de lancer quoique ce soit, on charge les fichiers "extras" dans le
   # répertoire d'installation

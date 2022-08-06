@@ -16,7 +16,6 @@ MSG_ERR_DOCKER="Souci avec Docker"
 # Adresse du socket Docker
 SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
 
-
 # Adresse du fichier docker-compose.yml. Cette variable est nécessaire pour
 # permettre aux multiples scripts des différents scripts d'y accéder.
 FICHIER_DOCKER_COMPOSE=""
@@ -37,6 +36,18 @@ initialisation_variable_docker_compose() {
     fi
     FICHIER_DOCKER_COMPOSE="${debut_adresse}${NOM_FICHIER_DOCKER_COMPOSE}"
   fi
+}
+
+# Création de l'espace Docker dans le répertoire donné en argument
+# 1: répertoire où installer le fichier docker-compose.yml et .env
+creer_espace_docker() {
+  local destination="${1}"
+
+  # Création du fichier docker-compose.yml
+  creer_fichier_docker_compose "${destination}"
+
+  # Création du fichier d'environnement dans le répertoire d'installation
+  creer_fichier_env "${destination}"
 }
 
 # Création du fichier docker-compose.yml dans le dossier donné
@@ -69,6 +80,28 @@ creer_fichier_docker_compose() {
   done
 
   msg_succes "Fichier Docker Compose: ${FICHIER_DOCKER_COMPOSE}"
+}
+
+# Création d'un fichier .env dans le répertoire donné en paramètre
+# 1: Répertoire d'installation du fichier .env
+creer_fichier_env() {
+  if [[ ! -d "${1}" ]]; then
+    msg_erreur_exit "Création d'un fichier .env : Destination '${1}' inexistante."
+  fi
+
+  local destination="${1}"
+  local fichier_env="${destination}/.env"
+
+  msg_info ".env : mémorisation des variables d'environnement nécessaires."
+
+  # Création du fichier
+  echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
+  echo "REP_INSTALLATION=\"${REP_INSTALLATION}\"" >> "${fichier_env}"
+  echo "DOCKER_SOCKET=\"${DOCKER_SOCKET}\"" >> "${fichier_env}"
+
+  # Tous les "PORT_" s'ajoutent aussi (au cas où nous changeons des ports)
+  # Si pas de sortie de script, on retourne un statut à 0.
+  printenv|grep -E "^PORT_.*" >> "${fichier_env}" || :
 }
 
 # Test si le fichier Docker Compose existe, sinon retourne une erreur
