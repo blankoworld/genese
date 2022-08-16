@@ -1,6 +1,5 @@
 # TODO
 
-* auto-chargement du script depuis un dépôt source
 * possibilité de "couper" la mise à jour automatique du script au début (avec une var. d'env.)
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
 * vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)

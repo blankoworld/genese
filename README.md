@@ -57,6 +57,20 @@ Options disponibles :
 - `-p <nom>`, `--profil <nom>` : Utilise le profil `<nom>` comme base de déploiement
 - `-s <nom>`, `--supprime <nom>` : Supprime l'instance `<nom>`
 
+# Installation et utilisation en une seule fois
+
+Petite astuce intéressante pour déployer un environnement en une seule fois : 
+
+```bash
+mkdir test
+cd test
+wget -q -O - "https://raw.githubusercontent.com/blankoworld/genese/develop/genese" |bash -s -- -p defaut
+```
+
+Cette commande va télécharger la dernière version du logiciel dans le répertoire `test` et lancer l'installation du profil par défaut.
+
+C'est de cette manière qu'on permet d'avoir un outil intéressant pour des installations en un seul coup.
+
 # Variables d'environnement
 
 ## Concernant l'application

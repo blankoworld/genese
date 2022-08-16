@@ -29,7 +29,7 @@ NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
 REP_MODELES="${REP_BASE}/modeles"
 
 # Dépôt d'origine à télécharger
-SOURCE="git@github.com:blankoworld/genese.git"
+SOURCE="https://github.com/blankoworld/genese.git"
 
 # Message d'utilisation du programme
 read -d '' UTILISATION << EOF
@@ -136,6 +136,17 @@ message_post_creation_instance() {
   msg_succes "${1} : Installation terminée."
 }
 
+# Essaie de charger le reste des fichiers de ce script en utilisant SOURCE
+auto_chargement() {
+  # Soit le dépôt GIT existe et on le met à jour, soit on clone le dépôt
+  local git_rep="${REP_BASE}/.git"
+  if [[ -d "${git_rep}" ]]; then
+    cd "${git_rep}" && git pull && cd - &>/dev/null
+  else
+    git clone "${SOURCE}" "${REP_BASE}"
+  fi
+}
+
 #####
 ## ARGUMENTS
 ###
@@ -150,6 +161,9 @@ message_post_creation_instance() {
 #####
 ## DÉBUT
 ###
+
+# Avant toute chose on charge le reste de la bibliothèque
+auto_chargement
 
 # Chargement des bibliothèques
 source "${REP_BASE}/bibliotheques/commun"
