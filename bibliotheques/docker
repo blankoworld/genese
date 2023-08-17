@@ -96,6 +96,7 @@ creer_fichier_env() {
 
   # Création du fichier
   echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
+  echo "REP_SERVICES=\"${REP_SERVICES}\"" >> "${fichier_env}"
   echo "REP_INSTALLATION=\"${REP_INSTALLATION}\"" >> "${fichier_env}"
   echo "DOCKER_SOCKET=\"${DOCKER_SOCKET}\"" >> "${fichier_env}"
 
