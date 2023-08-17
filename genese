@@ -124,6 +124,7 @@ analyse_options() {
 
 # Affichage du message final après création d'une instance
 # - nécessite la bibliothèque 'docker'
+# 1: Nom de l'instance
 message_post_creation_instance() {
   # Liste des conteneurs de l'instance choisie
   # REP_INSTALLATION a été créé dans creer_instance
@@ -133,7 +134,7 @@ message_post_creation_instance() {
   # s'il existe.
   executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
-  msg_succes "${1} : Installation terminée."
+  msg_succes "Instance '${1}' : Installation terminée."
 }
 
 # Essaie de charger le reste des fichiers de ce script en utilisant SOURCE
@@ -195,7 +196,7 @@ if "${CREATION_INSTANCE}"; then
   # Traitement post-installation
   lancer_portainer
   # Affichage du message final d'installation pour l'instance choisie
-  message_post_creation_instance
+  message_post_creation_instance "${NOM_INSTANCE}"
 elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then
   # Cas où l'utilisateur a donné le nom d'une instance, sans demander
   # la création d'une instance
