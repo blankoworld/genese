@@ -4,6 +4,12 @@
 ## VARIABLES
 ###
 
+GRAS="\033[1m"                      # GRAS
+COULEUR_ROUGE="\033[31m"            # Couleur rouge
+COULEUR_VERT="\033[32m"             # Couleur vert
+COULEUR_BLEU="\033[34m"             # Couleur bleu
+COULEUR_JAUNE="\033[1;33m"          # Couleur jaune
+
 COULEUR_DEFAUT="\033[0m"            # Annulation de couleur
 COULEUR_INFO="\033[7;49;34m"        # Fond bleu
 COULEUR_SUCCES="\033[7;49;32m"      # Fond vert

@@ -135,7 +135,7 @@ message_post_creation_instance() {
   executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
   # Affichage des infos de portainer
-  msg_info "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : http://localhost:${PORT_PORTAINER}/"
+  msg_info "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${GRAS}${COULEUR_ROUGE}http://localhost:${PORT_PORTAINER}/${COULEUR_DEFAUT}"
 
   msg_succes "Instance '${1}' : Installation terminée."
 }
