@@ -134,6 +134,9 @@ message_post_creation_instance() {
   # s'il existe.
   executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
+  # Affichage des infos de portainer
+  msg_info "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : http://localhost:${PORT_PORTAINER}/"
+
   msg_succes "Instance '${1}' : Installation terminée."
 }
 
