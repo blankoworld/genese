@@ -141,7 +141,7 @@ auto_chargement() {
   # Soit le dépôt GIT existe et on le met à jour, soit on clone le dépôt
   local git_rep="${REP_BASE}/.git"
   if [[ -d "${git_rep}" ]]; then
-    cd "${git_rep}" && git pull && cd - &>/dev/null
+    cd "${REP_BASE}" && git pull && cd - &>/dev/null
   else
     git clone "${SOURCE}" "${REP_BASE}"
   fi
