@@ -94,11 +94,17 @@ creer_fichier_env() {
 
   msg_info ".env : mémorisation des variables d'environnement nécessaires."
 
+  # Utilisation du nom de l'utilisateur comme préfixe,
+  # agrémenté du nom du répertoire d'installation (qui est censé être unique…)
+  # Remplacement des caractères '/' en '-'
+  COMPOSE_PROJECT_NAME=`echo "${USER}-${REP_INSTALLATION##*/}" |sed -e 's|/|-|g'`
+
   # Création du fichier
   echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
   echo "REP_SERVICES=\"${REP_SERVICES}\"" >> "${fichier_env}"
   echo "REP_INSTALLATION=\"${REP_INSTALLATION}\"" >> "${fichier_env}"
   echo "DOCKER_SOCKET=\"${DOCKER_SOCKET}\"" >> "${fichier_env}"
+  echo "COMPOSE_PROJECT_NAME=\"${COMPOSE_PROJECT_NAME}\"" >> "${fichier_env}"
 
   # Tous les "PORT_" s'ajoutent aussi (au cas où nous changeons des ports)
   # Si pas de sortie de script, on retourne un statut à 0.
