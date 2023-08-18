@@ -18,15 +18,10 @@ fi
 ## VARIABLES
 ###
 
-# Répertoire dans lequel trouver les services
-REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
 # Nom du fichier utilisé pour décrire un service
 NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
 # Nom du déclencheur d'affichage des messages après installation
 NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
-# Répertoire dans lequel trouver les modèles (template) pour un certain
-# nombre de fichiers. Volontairement non modifiable par variable d'env.
-REP_MODELES="${REP_BASE}/modeles"
 
 # Dépôt d'origine à télécharger
 SOURCE="https://github.com/blankoworld/genese.git"
@@ -142,12 +137,22 @@ message_post_creation_instance() {
 
 # Essaie de charger le reste des fichiers de ce script en utilisant SOURCE
 auto_chargement() {
-  # Soit le dépôt GIT existe et on le met à jour, soit on clone le dépôt
+  # Soit le dépôt GIT existe et on le met à jour,
   local git_rep="${REP_BASE}/.git"
   if [[ -d "${git_rep}" ]]; then
     cd "${REP_BASE}" && git pull && cd - &>/dev/null
+  # soit nous partons du script seul et on télécharge le reste
   else
-    git clone "${SOURCE}" "${REP_BASE}"
+    # le répertoire de base devient un autre répertoire
+    REP_BASE="${REP_BASE}/.${PROGRAMME}"
+    # En ce cas 2 possibilités : 
+    # 1/ le répertoire spécial existe et on met à jour
+    # 2/ le répertoire spécial n'existe pas et on clone dedans
+    if [[ -d "${REP_BASE}" ]]; then
+      cd "${REP_BASE}" && git pull && cd - &>/dev/null
+    else
+      git clone "${SOURCE}" "${REP_BASE}"
+    fi
   fi
 }
 
@@ -168,6 +173,13 @@ auto_chargement() {
 
 # Avant toute chose on charge le reste de la bibliothèque
 auto_chargement
+
+# Chargement des variables dépendantes du répertoire de BASE
+# Répertoire dans lequel trouver les services
+REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
+# Répertoire dans lequel trouver les modèles (template) pour un certain
+# nombre de fichiers. Volontairement non modifiable par variable d'env.
+REP_MODELES="${REP_BASE}/modeles"
 
 # Chargement des bibliothèques
 source "${REP_BASE}/bibliotheques/commun"
