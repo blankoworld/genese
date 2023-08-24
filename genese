@@ -8,20 +8,9 @@
 PROGRAMME=`basename $0 .sh`
 REP_BASE=$(cd `dirname $0` && pwd)
 
-# Configuration par l'utilisateur ? Si oui, on charge !
-if [[ -f "${REP_BASE}/.env" ]]; then
-  # Charge la liste des variables d'env. personnalisées de l'utilisateur
-  source "${REP_BASE}/.env"
-fi
-
 #####
 ## VARIABLES
 ###
-
-# Nom du fichier utilisé pour décrire un service
-NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
-# Nom du déclencheur d'affichage des messages après installation
-NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
 
 # Dépôt d'origine à télécharger
 SOURCE="https://github.com/blankoworld/genese.git"
@@ -117,6 +106,15 @@ analyse_options() {
   done
 }
 
+# Charge les données utilisateurs
+configure() {
+# Configuration par l'utilisateur ? Si oui, on charge !
+if [[ -f "${REP_BASE}/.env" ]]; then
+  # Charge la liste des variables d'env. personnalisées de l'utilisateur
+  source "${REP_BASE}/.env"
+fi
+}
+
 # Affichage du message final après création d'une instance
 # - nécessite la bibliothèque 'docker'
 # 1: Nom de l'instance
@@ -153,6 +151,8 @@ auto_chargement() {
     else
       git clone "${SOURCE}" "${REP_BASE}"
     fi
+    # Le répertoire de base ayant changé, on recharge la configuration
+    configure
   fi
 }
 
@@ -171,8 +171,15 @@ auto_chargement() {
 ## DÉBUT
 ###
 
+# charge le fichier de configuration de l'utilisateur
+configure
 # Avant toute chose on charge le reste de la bibliothèque
 auto_chargement
+
+# Nom du fichier utilisé pour décrire un service
+NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
+# Nom du déclencheur d'affichage des messages après installation
+NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
 
 # Chargement des variables dépendantes du répertoire de BASE
 # Répertoire dans lequel trouver les services
