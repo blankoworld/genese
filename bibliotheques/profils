@@ -104,12 +104,16 @@ charger_depot_service() {
   # initialisation de variables
   local service="${1}"
   local fichier="${REP_SERVICES}/${service}/${NOM_FICHIER_SOURCE}"
+  local destination="${REP_INSTALLATION}/${service}"
 
   # Chargement des informations si le fichier existe
   if [[ -f "${fichier}" ]]; then
     local branche=$(cat "${fichier}"|cut -d ' ' -f 1)
     local adresse=$(cat "${fichier}"|cut -d ' ' -f 2-)
-    local destination="${REP_INSTALLATION}/${service}"
+
+    # Vérif. branche à charger (BRANCHE_nomService supplante la valeur)
+    local variable=$(echo "BRANCHE_${service^^}"|tr '[:lower:]' '[:upper:]')
+    branche="${!variable:-${branche}}"
 
     git_clone "${adresse}" "${branche}" "${destination}"
   fi

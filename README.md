@@ -110,6 +110,7 @@ En revanche elles peuvent être utilisées dans les scripts - dits déclencheurs
 
 Voici une liste non exhaustive des variables disponibles : 
 
+- `BRANCHE_MONSERVICE` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `BRANCHE_ADMINER="dev" ./genese -p defaut`
 - `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
 - `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
 - `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.

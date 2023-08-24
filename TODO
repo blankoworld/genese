@@ -7,6 +7,5 @@
 * Documentation sur les fonctions disponibles à l'utilisateur pour ses scripts (msg_info, etc.)
 * Initialiser la variable de DEBUG
 * Ajouter une variable d'environnement pour choisir l'image Portainer qu'on souhaite utiliser
-* Permettre de surcharger n'importe quel nom de branche d'un dépôt en générant des variables XYZ_BRANCHE où XYZ est le nom du service. Exemple avec le service adminer : ADMINER_BRANCHE permet de surcharger le nom de la branche du service Adminer
-* Même idée de surcharge de variable avec XYZ_SOURCE ?
+* Même idée de surcharge de variable avec XYZ_SOURCE que BRANCHE_XYZ ?
 * étape de "build" des Docker en utilisant les variables d'environnement (--env-file)
