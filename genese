@@ -138,7 +138,7 @@ auto_chargement() {
   # Soit le dépôt GIT existe et on le met à jour,
   local git_rep="${REP_BASE}/.git"
   if [[ -d "${git_rep}" ]]; then
-    cd "${REP_BASE}" && git pull && cd - &>/dev/null
+    cd "${REP_BASE}" && git pull -q && cd - &>/dev/null
   # soit nous partons du script seul et on télécharge le reste
   else
     # le répertoire de base devient un autre répertoire
@@ -149,7 +149,7 @@ auto_chargement() {
     if [[ -d "${REP_BASE}" ]]; then
       cd "${REP_BASE}" && git pull && cd - &>/dev/null
     else
-      git clone "${SOURCE}" "${REP_BASE}"
+      git clone -q "${SOURCE}" "${REP_BASE}"
     fi
     # Le répertoire de base ayant changé, on recharge la configuration
     configure
