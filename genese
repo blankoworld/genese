@@ -108,11 +108,11 @@ analyse_options() {
 
 # Charge les données utilisateurs
 configure() {
-# Configuration par l'utilisateur ? Si oui, on charge !
-if [[ -f "${REP_BASE}/.env" ]]; then
-  # Charge la liste des variables d'env. personnalisées de l'utilisateur
-  source "${REP_BASE}/.env"
-fi
+  # Configuration par l'utilisateur ? Si oui, on charge !
+  if [[ -f "${REP_BASE}/.env" ]]; then
+    # Charge la liste des variables d'env. personnalisées de l'utilisateur
+    source "${REP_BASE}/.env"
+  fi
 }
 
 # Affichage du message final après création d'une instance
