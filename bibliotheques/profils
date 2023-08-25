@@ -112,7 +112,7 @@ charger_depot_service() {
     local adresse=$(cat "${fichier}"|cut -d ' ' -f 2-)
 
     # Vérif. branche à charger (BRANCHE_nomService supplante la valeur)
-    local variable=$(echo "BRANCHE_${service^^}"|tr '[:lower:]' '[:upper:]')
+    local variable=$(echo "BRANCHE_${service^^}"|tr '[:lower:]' '[:upper:]'|sed -e 's/-/_/g')
     branche="${!variable:-${branche}}"
 
     git_clone "${adresse}" "${branche}" "${destination}"
