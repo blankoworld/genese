@@ -64,6 +64,22 @@ msg_debug() {
   fi
 }
 
+# Vérification de la présence d'un programme dans le système
+# argument 1 : variable d'export qui définit le chemin du programme à utiliser
+# argument 2 : nom exact du programme
+test_commande_presente() {
+  message="Commande '$2' non trouvée !"
+  # préparation de la commande qui sera lancée
+  contenu_export=`which $2` || return 1
+
+  # vérification de la présence de notre commande
+  if test -n $(command -v $2 &> /dev/null); then
+    export $1="${contenu_export}"
+    return 0
+  fi
+  return 1
+}
+
 # Exécute le script donné en paramètre, si le fichier existe
 # 1: Script à exécuter
 # 2: (optionnel) Message pre-exécution

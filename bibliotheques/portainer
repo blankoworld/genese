@@ -26,15 +26,15 @@ lancer_portainer() {
 
   # Recherche d'un précédent conteneur PORTAINER
   msg_info "${titre} : Recherche de '${NOM_PORTAINER}'…"
-  etat=`docker inspect --format="{{ .State.Status }}" "${NOM_PORTAINER}" 2> /dev/null` || : # Si erreur, on ne fait rien (le double point)
+  etat=`${CMD_DOCKER} inspect --format="{{ .State.Status }}" "${NOM_PORTAINER}" 2> /dev/null` || : # Si erreur, on ne fait rien (le double point)
 
   # Lancement du service si nécessaire
   succes="Lancé !"
   if [[ -z "${etat}" ]]; then
-    docker run -d -p "${PORT_PORTAINER}":9000 --name="${NOM_PORTAINER}" --restart=always -v "${SOCKET_DOCKER}":/var/run/docker.sock -v "${NOM_PORTAINER}":/data ${IMAGE_PORTAINER} && msg_succes "${titre} : ${succes}" || exit 1
+    ${CMD_DOCKER} run -d -p "${PORT_PORTAINER}":9000 --name="${NOM_PORTAINER}" --restart=always -v "${SOCKET_DOCKER}":/var/run/docker.sock -v "${NOM_PORTAINER}":/data ${IMAGE_PORTAINER} && msg_succes "${titre} : ${succes}" || exit 1
   elif [[ "${etat}" == "exited" ]]; then
     msg_info "${titre} : Le service existe. Lancement…"
-    docker start "${NOM_PORTAINER}" && msg_succes "${titre} : ${succes}" || exit 1
+    ${CMD_DOCKER} start "${NOM_PORTAINER}" && msg_succes "${titre} : ${succes}" || exit 1
   else
     msg_succes "${titre} : État '${etat}'"
   fi

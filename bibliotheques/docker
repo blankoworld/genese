@@ -20,9 +20,59 @@ SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
 # permettre aux multiples scripts des différents scripts d'y accéder.
 FICHIER_DOCKER_COMPOSE=""
 
+# Commande DOCKER
+CMD_DOCKER="${CMD_DOCKER:-/usr/bin/docker}"
+# Commande Docker Compose
+CMD_DOCKER_COMPOSE="${CMD_DOCKER_COMPOSE:-/usr/bin/docker-compose}"
+
+# TEST au plus tôt pour vérifier la présence des éléments Docker
+# En cas d'absence, cela permet d'arrêter le programme rapidement
+# On teste la valeur fourni par l'utilisateur, sinon le programme par défaut
+# Puis on tente podman
+# Puis on tente docker
+cmd_retenue=false
+for cmd in "${CMD_DOCKER}" podman docker; do
+  test_commande_presente "CMD_DOCKER" "${cmd}"
+  res_cmd=`echo $?`
+  if test "${res_cmd}" != 0; then
+    continue
+  fi
+  cmd_retenue="${cmd}"
+  msg_info "Commande DOCKER utilisée : ${CMD_DOCKER}"
+  break
+done
+# ERREUR si la commande n'est finalement pas trouvée
+if ! test -n $(command -v "${CMD_DOCKER}" &> /dev/null); then
+  msg_erreur_exit "Commande DOCKER : non trouvée !"
+fi
+
+# TODO: prendre l'action de l'utilisateur en compte
+# TODO: améliorer la détection de docker compose
+# TEST sur podman-compose/docker-compose avec ou sans espace.
+# On s'appuie sur la commande précédente retenue en ajoutant "-compose"
+cmd_compose="${cmd_retenue}-compose" # podman-compose ou docker-compose
+test_commande_presente "CMD_DOCKER_COMPOSE" "${cmd_compose}"
+if test "$?" != 0; then
+  echo "COMPOSE : ${cmd_compose} pas TROUVÉE !"
+else
+  cmd_compose="${cmd_retenue} compose"
+  export CMD_DOCKER_COMPOSE="${cmd_compose}"
+fi
+# ERREUR si la commande n'est finalement pas existante/fonctionnelle
+${CMD_DOCKER_COMPOSE} version &> /dev/null \
+  && msg_info "Commande DOCKER COMPOSE utilisée : ${CMD_DOCKER_COMPOSE}" \
+  || msg_erreur_exit "Commande DOCKER COMPOSE : non trouvée !"
+
 #####
 ## FONCTIONS
 ###
+
+# Vérification du service Docker
+test_service_docker_en_execution() {
+  $CMD_DOCKER info &> /dev/null \
+    && msg_succes "DOCKER : présent et lancé !" \
+    || msg_erreur_exit "DOCKER : manquant ! Vérifiez qu'il soit présent et lancé."
+}
 
 # Initialisation de la variable globale contenant l'adresse du fichier
 # docker-compose.yml
@@ -135,10 +185,12 @@ demarre_conteneurs() {
 
   # Vérification que le fichier Docker Compose existe
   test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
+  # Vérification que Docker est bel et bien lancé
+  test_service_docker_en_execution
 
   # Démarrage des conteneurs
   msg_info "Démarrage des conteneurs Docker"
-  docker-compose -f "${FICHIER_DOCKER_COMPOSE}" up -d || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" up -d || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 
   msg_succes "Conteneurs Docker lancés"
@@ -153,10 +205,12 @@ lister_conteneurs() {
 
   # Vérification que le fichier Docker Compose existe
   test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
+  # Vérification que Docker est bel et bien lancé
+  test_service_docker_en_execution
 
   # Liste des conteneurs
   msg_info "Liste des conteneurs Docker lancés"
-  docker-compose -f "${FICHIER_DOCKER_COMPOSE}" ps || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" ps || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 }
 
@@ -169,12 +223,14 @@ suppression_conteneurs() {
 
   # Vérification que le fichier Docker Compose existe
   test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
+  # Vérification que Docker est bel et bien lancé
+  test_service_docker_en_execution
 
   # Arrêt des conteneurs Docker
-  docker compose -f "${FICHIER_DOCKER_COMPOSE}" kill || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" kill || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
   # Suppression des conteneurs
-  docker compose -f "${FICHIER_DOCKER_COMPOSE}" down || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" down || msg_erreur_exit \
     "${MSG_ERR_DOCKER}"
 
   msg_succes "Arrêt des conteneurs Docker"
