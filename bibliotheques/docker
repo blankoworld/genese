@@ -21,51 +21,45 @@ SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
 FICHIER_DOCKER_COMPOSE=""
 
 # Commande DOCKER
-CMD_DOCKER="${CMD_DOCKER:-/usr/bin/docker}"
+CMD_DOCKER=""
 # Commande Docker Compose
-CMD_DOCKER_COMPOSE="${CMD_DOCKER_COMPOSE:-/usr/bin/docker-compose}"
-
-# TEST au plus tôt pour vérifier la présence des éléments Docker
-# En cas d'absence, cela permet d'arrêter le programme rapidement
-# On teste la valeur fourni par l'utilisateur, sinon le programme par défaut
-# Puis on tente podman
-# Puis on tente docker
-cmd_retenue=false
-for cmd in "${CMD_DOCKER}" podman docker; do
-  test_commande_presente "CMD_DOCKER" "${cmd}"
-  res_cmd=`echo $?`
-  if test "${res_cmd}" != 0; then
-    continue
-  fi
-  cmd_retenue="${cmd}"
-  msg_info "Commande DOCKER utilisée : ${CMD_DOCKER}"
-  break
-done
-# ERREUR si la commande n'est finalement pas trouvée
-if ! test -n $(command -v "${CMD_DOCKER}" &> /dev/null); then
-  msg_erreur_exit "Commande DOCKER : non trouvée !"
-fi
-
-# TODO: prendre l'action de l'utilisateur en compte
-# TODO: améliorer la détection de docker compose
-# TEST sur podman-compose/docker-compose avec ou sans espace.
-# On s'appuie sur la commande précédente retenue en ajoutant "-compose"
-cmd_compose="${cmd_retenue}-compose" # podman-compose ou docker-compose
-test_commande_presente "CMD_DOCKER_COMPOSE" "${cmd_compose}"
-if test "$?" != 0; then
-  echo "COMPOSE : ${cmd_compose} pas TROUVÉE !"
-else
-  cmd_compose="${cmd_retenue} compose"
-  export CMD_DOCKER_COMPOSE="${cmd_compose}"
-fi
-# ERREUR si la commande n'est finalement pas existante/fonctionnelle
-${CMD_DOCKER_COMPOSE} version &> /dev/null \
-  && msg_info "Commande DOCKER COMPOSE utilisée : ${CMD_DOCKER_COMPOSE}" \
-  || msg_erreur_exit "Commande DOCKER COMPOSE : non trouvée !"
+CMD_DOCKER_COMPOSE=""
 
 #####
 ## FONCTIONS
 ###
+
+# Vérification de la commande Docker : 
+# - soit podman
+# - soit docker
+test_docker_present() {
+  for cmd in podman docker; do
+    if [[ `which ${cmd} &> /dev/null; echo $?` == 0 ]]; then
+      export CMD_DOCKER=`which ${cmd}`
+      break
+    fi
+  done
+  if [[ -z "${CMD_DOCKER}" ]]; then
+    msg_erreur_exit "Commande DOCKER : non trouvée !"
+  fi
+}
+
+# Vérification de la commande Docker Compose
+# S'appuie sur CMD_DOCKER précédent
+test_docker_compose_present() {
+  # on ajoute "-compose" à CMD_DOCKER (podman-compose ou docker-compose)
+  cmd_compose="${CMD_DOCKER}-compose"
+  if [[ `${cmd_compose} &> /dev/null; echo $?` == 0 ]]; then
+    export CMD_DOCKER_COMPOSE="${cmd_compose}"
+  else
+    # TODO: remanier code avec `docker info -f '{{json .ClientInfo.Plugins}}'`
+    cmd_compose="${CMD_DOCKER} compose"
+    ${cmd_compose} version &> /dev/null && export CMD_DOCKER_COMPOSE="${cmd_compose}"
+  fi
+  if [[ -z "${CMD_DOCKER_COMPOSE}" ]];  then
+    msg_erreur_exit "Commande DOCKER COMPOSE : non trouvée !"
+  fi
+}
 
 # Vérification du service Docker
 test_service_docker_en_execution() {
@@ -235,5 +229,14 @@ suppression_conteneurs() {
 
   msg_succes "Arrêt des conteneurs Docker"
 }
+
+#####
+## TESTS
+###
+
+# Vérification de la présence de Docker : arrêt du programme si absent
+test_docker_present
+# Vérification de la présence de Docker Compose : arrêt du programme si absent
+test_docker_compose_present
 
 # vim: ts=2 sw=2 et nu syn=bash
