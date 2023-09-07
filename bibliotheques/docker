@@ -141,7 +141,9 @@ creer_fichier_env() {
   # Utilisation du nom de l'utilisateur comme préfixe,
   # agrémenté du nom du répertoire d'installation (qui est censé être unique…)
   # Remplacement des caractères '/' en '-'
-  COMPOSE_PROJECT_NAME=`echo "${USER}-${REP_INSTALLATION##*/}" |sed -e 's|/|-|g'`
+  COMPOSE_PROJECT_NAME=`echo "${USER/./-}-${REP_INSTALLATION##*/}" \
+    |sed -e 's|/|-|g' \
+    -e 's|\.|-|'`
 
   # Création du fichier
   echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
