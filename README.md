@@ -12,6 +12,24 @@ C'est un outil initialement fait pour des développeurs d'application, afin de l
 
 Un exemple est donné dans les dossiers `profils.exemple` et `services.exemple`.
 
+# Fonctionnalités
+
+* Création automatisée de conteneurs Docker reliés entre eux
+* Génération d'un fichier docker-compose.yml à partir de dossiers standardisés
+* Téléchargement automatique des dépôts Git pour les projets ciblés
+* Utilisation de fichiers de profils pour décrire les « dépendances » d'un projet (profil)
+* Héritage possible d'un profil à l'autre
+* Lancement d'une instance unique de Portainer pour la gestion des « stacks » générées
+* Choix possible d'un nom de stack pour chaque « projet » (profil) qu'on lance
+* Affichage en couleur de la procédure d'installation d'un projet (profil)
+* Utilisation de variables d'environnement pour surcharger le paramétrage de l'application
+* Détection de podman, docker et podman-compose/docker-compose
+* Listing des « instances » générées par le programme
+* Suppression/nettoyage possible d'une instance donnée
+* Système de « déclencheurs » pour permettre d'exécuter un code spécifique avant/après le lancement des conteneurs
+* Surcharge possible des fichiers récupérés par Git pour écraser certains fichiers ou apporter de la configuration supplémentaire
+* Possibilité d'utiliser le script sur Gitlab Pages pour lui permettre de s'auto-charger d'un dépôt et déployer le reste des bibliothèques nécessaires
+
 # Prérequis
 
 Il faut les outils suivants : 
