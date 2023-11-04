@@ -95,13 +95,13 @@ C'est de cette manière qu'on permet d'avoir un outil intéressant pour des inst
 
 L'utilisation de variables d'environnement permettent de personnaliser le comportement de l'outil.
 
-- `NOM_DECLENCHEUR_POST_DOCKER` : Nom du fichier contenant les commandes effectuées **après** le lancement de tous les conteneurs Docker. Le fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/z_post_docker`. Valeur par défaut : `z_post_docker`
-- `NOM_DECLENCHEUR_POST_INSTALLATION` : Nom du fichier contenant des commandes à lancer à la fin de l'installation d'une instance. Il doit se trouver dans le dossier d'un service utilisé. Par exemple dans `./services/adminer/z_fin`. Valeur par défaut : `z_fin`
-- `NOM_DECLENCHEUR_PRE_DOCKER` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/z_pre_docker`. Valeur par défaut : `z_pre_docker`
+- `NOM_DECLENCHEUR_POST_DOCKER` : Nom du fichier contenant les commandes effectuées **après** le lancement de tous les conteneurs Docker. Le fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_post_docker.sh`. Valeur par défaut : `hook_post_docker.sh`
+- `NOM_DECLENCHEUR_POST_INSTALLATION` : Nom du fichier contenant des commandes à lancer à la fin de l'installation d'une instance. Il doit se trouver dans le dossier d'un service utilisé. Par exemple dans `./services/adminer/hook_fin.sh`. Valeur par défaut : `hook_fin.sh`
+- `NOM_DECLENCHEUR_PRE_DOCKER` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_pre_docker.sh`. Valeur par défaut : `hook_pre_docker.sh`
 - `NOM_DOSSIER_EXTRAS` : Nom du dossier contenant les fichiers qu'on souhaite déposer dans le répertoire d'une instance. Ce dossier se trouve dans les services pour lesquels on souhaite écraser quelques fichiers. Valeur par défaut : `extras`. Chaque fichier et dossier dans ce répertoire se retrouvera dans la destination finale.
 - `NOM_FICHIER_SOURCE` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
 - `NOM_FICHIER_DOCKER_COMPOSE` : Nom du fichier Docker Compose final pour l'instance. Valeur par défaut : `docker-compose.yml`
-- `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `description.yml`
+- `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `compose.yml`
 - `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`

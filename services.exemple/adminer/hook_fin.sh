@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# hook_fin.sh
 
 adminer_port=`docker-compose -f "${FICHIER_DOCKER_COMPOSE}" port adminer 8080 |cut -d ":" -f 2`
 

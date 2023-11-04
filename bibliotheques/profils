@@ -23,8 +23,8 @@ REP_INSTALLATION=""
 LISTE_SERVICES=()
 
 # Nom des différents déclencheurs pre/post docker, build, etc.
-NOM_DECLENCHEUR_PRE_DOCKER="${NOM_DECLENCHEUR_PRE_DOCKER:-z_pre_docker}"
-NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-z_post_docker}"
+NOM_DECLENCHEUR_PRE_DOCKER="${NOM_DECLENCHEUR_PRE_DOCKER:-hook_pre_docker.sh}"
+NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-hook_post_docker.sh}"
 
 # Nom du fichier contenant les informations du dépôt à télécharger
 NOM_FICHIER_SOURCE="${NOM_FICHIER_SOURCE:-source}"
@@ -44,10 +44,11 @@ ERR_400="La variable REP_INSTALLATION est vide."
 # Fonction récursive
 # 1: Nom du profil situé dans le dossier REP_PROFILS
 decouverte_services() {
-  fichier="${REP_PROFILS}/${1}"
+  fichier="${REP_PROFILS}/${1}.sh"
 
   # Interruption si profil non trouvé.
-  if [[ ! -f "${REP_PROFILS}/${1}" ]]; then
+  if [[ ! -f "${fichier}" ]]; then
+    msg_debug "${fichier}"
     msg_erreur_exit "Profil '${1}' non trouvé !"
   fi
 
@@ -160,10 +161,10 @@ lister_profils() {
 
   msg_info "Liste des profils"
 
-  for profil in `ls "${REP_PROFILS}"`; do
+  for profil in `find "${REP_PROFILS}" -type f -name "*.sh" -printf "%f\n"`; do
     # Exclusion du profil commun
-    if [[ "${profil}" != "commun" ]]; then
-      msg "  - ${profil}"
+    if [[ "${profil}" != "commun.sh" ]]; then
+      msg "  - ${profil/.sh/}"
       detection=true
     fi
   done

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# z_pre_docker de memory_game
+# hook_pre_docker.sh de memory_game
 #
 # Va copier le contenu du dossier base_de_donnees vers bdd du répertoire
 # d'installation de base.

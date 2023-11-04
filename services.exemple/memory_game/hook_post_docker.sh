@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# z_post_docker
+# hook_post_docker.sh
 #
 
 # Installation des dépendances composer

@@ -177,9 +177,9 @@ configure
 auto_chargement
 
 # Nom du fichier utilisé pour décrire un service
-NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-description.yml}"
+NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-compose.yml}"
 # Nom du déclencheur d'affichage des messages après installation
-NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-z_fin}"
+NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-hook_fin.sh}"
 
 # Chargement des variables dépendantes du répertoire de BASE
 # Répertoire dans lequel trouver les services
