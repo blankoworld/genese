@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Dépendance de cette bibliothèque : 
-# - commun
+# - common
 
 #####
 ## FONCTIONS

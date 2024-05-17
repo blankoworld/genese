@@ -189,7 +189,7 @@ REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
 REP_TEMPLATES="${REP_BASE}/templates"
 
 # Load libraries
-source "${REP_BASE}/lib/commun"
+source "${REP_BASE}/lib/common"
 source "${REP_BASE}/lib/git"
 source "${REP_BASE}/lib/docker"
 source "${REP_BASE}/lib/portainer"
