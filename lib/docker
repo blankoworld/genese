@@ -10,7 +10,7 @@
 # Nom du fichier Docker Compose final (pour l'instance)
 NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
 # Adresse de l'entête utilisée pour le fichier Docker Compose final
-ENTETE_DOCKER_COMPOSE="${REP_MODELES}/entete.yml"
+ENTETE_DOCKER_COMPOSE="${REP_TEMPLATES}/entete.yml"
 # Message d'erreur commun aux problèmes Docker
 MSG_ERR_DOCKER="Souci avec Docker"
 # Adresse du socket Docker

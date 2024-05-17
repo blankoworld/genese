@@ -138,7 +138,7 @@ Voici une liste non exhaustive des variables disponibles :
 - `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
 - `REP_BASE` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
 - `REP_INSTALLATION` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/defaut/`.
-- `REP_MODELES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
+- `REP_TEMPLATES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
 - `SOURCE` : dépôt Git où trouver l'application `genese`.
 
 

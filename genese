@@ -186,7 +186,7 @@ NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-hook_fin
 REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
 # Répertoire dans lequel trouver les modèles (template) pour un certain
 # nombre de fichiers. Volontairement non modifiable par variable d'env.
-REP_MODELES="${REP_BASE}/modeles"
+REP_TEMPLATES="${REP_BASE}/templates"
 
 # Load libraries
 source "${REP_BASE}/lib/commun"
