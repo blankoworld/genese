@@ -10,7 +10,7 @@
 ###
 
 # Configuration par défaut pour créer des instances
-CONFIG="${CONFIG:-defaut}"
+CONFIG="${CONFIG:-default}"
 
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"

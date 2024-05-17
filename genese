@@ -32,11 +32,11 @@ EXEMPLES
     # Afficher l'aide
     ${PROGRAMME} -h
 
-    # Créer une instance en utilisant la config. 'defaut'
-    ${PROGRAMME} -c defaut
+    # Créer une instance en utilisant la config. 'default'
+    ${PROGRAMME} -c default
 
-    # Créer une instance 'super_instance' en utilisant la configuration 'defaut'
-    ${PROGRAMME} -c defaut -n super_instance
+    # Créer une instance 'super_instance' en utilisant la configuration 'default'
+    ${PROGRAMME} -c default -n super_instance
 
     # Lister les instances ainsi créées
     ${PROGRAMME} -i

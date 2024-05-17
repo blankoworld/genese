@@ -82,7 +82,7 @@ Petite astuce intéressante pour déployer un environnement en une seule fois :
 ```bash
 mkdir test
 cd test
-wget -q -O - "https://raw.githubusercontent.com/blankoworld/genese/develop/genese" |bash -s -- -p defaut
+wget -q -O - "https://raw.githubusercontent.com/blankoworld/genese/develop/genese" |bash -s -- -c default
 ```
 
 Cette commande va télécharger la dernière version du logiciel dans le répertoire `test` et lancer l'installation de la configuration par défaut.
@@ -104,7 +104,7 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `compose.yml`
 - `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
-- `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `defaut`
+- `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `default`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
 - `REP_CONFIGS` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
 - `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.exemple`
@@ -128,7 +128,7 @@ En revanche elles peuvent être utilisées dans les scripts - dits déclencheurs
 
 Voici une liste non exhaustive des variables disponibles : 
 
-- `BRANCHE_MONSERVICE` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `BRANCHE_ADMINER="dev" ./genese -p defaut`
+- `BRANCHE_MONSERVICE` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `BRANCHE_ADMINER="dev" ./genese -c default`
 - `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
 - `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
 - `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
@@ -137,7 +137,7 @@ Voici une liste non exhaustive des variables disponibles :
 - `CONFIG` : nom de la config. choisie par l'utilisateur
 - `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
 - `REP_BASE` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
-- `REP_INSTALLATION` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/defaut/`.
+- `REP_INSTALLATION` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/default/`.
 - `REP_TEMPLATES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
 - `SOURCE` : dépôt Git où trouver l'application `genese`.
 
