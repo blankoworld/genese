@@ -10,7 +10,7 @@ En effet, vous décrivez chaque service que vous utilisez dans un dossier à cet
 
 C'est un outil initialement fait pour des développeurs d'application, afin de leur faciliter la création d'un nouvel environnement de travail à chaque nouveau ticket, pour chaque développeur, pour chaque projet.
 
-Un exemple est donné dans les dossiers `configs.example` et `services.exemple`.
+Un exemple est donné dans les dossiers `configs.example` et `services.example`.
 
 # Fonctionnalités
 
@@ -107,7 +107,7 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `default`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
 - `REP_CONFIGS` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
-- `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.exemple`
+- `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.example`
 - `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 
 Vous pouvez surcharger les valeurs de ces variables en ligne de commande, par exemple : 
