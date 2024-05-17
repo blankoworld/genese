@@ -188,12 +188,12 @@ REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.exemple}"
 # nombre de fichiers. Volontairement non modifiable par variable d'env.
 REP_MODELES="${REP_BASE}/modeles"
 
-# Chargement des bibliothèques
-source "${REP_BASE}/bibliotheques/commun"
-source "${REP_BASE}/bibliotheques/git"
-source "${REP_BASE}/bibliotheques/docker"
-source "${REP_BASE}/bibliotheques/portainer"
-source "${REP_BASE}/bibliotheques/profils"
+# Load libraries
+source "${REP_BASE}/lib/commun"
+source "${REP_BASE}/lib/git"
+source "${REP_BASE}/lib/docker"
+source "${REP_BASE}/lib/portainer"
+source "${REP_BASE}/lib/profils"
 
 # On a besoin du répertoire des services
 if [[ ! -d "${REP_SERVICES}" ]]; then
