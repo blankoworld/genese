@@ -9,13 +9,13 @@
 ## VARIABLES
 ###
 
-# Profil par défaut pour créer des instances
-PROFIL="${PROFIL:-defaut}"
+# Configuration par défaut pour créer des instances
+CONFIG="${CONFIG:-defaut}"
 
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
-# Répertoire dans lequel trouver les profils
-REP_PROFILS="${REP_PROFILS:-${REP_BASE}/configs.example}"
+# Répertoire dans lequel trouver les configs
+REP_CONFIGS="${REP_CONFIGS:-${REP_BASE}/configs.example}"
 # Répertoire d'installation de l'instance (soit pour la création, soit pour la suppression). Initialisé quand nécessaire.
 REP_INSTALLATION=""
 
@@ -42,14 +42,14 @@ ERR_400="La variable REP_INSTALLATION est vide."
 
 # Découvre les services associés dans le fichier fourni
 # Fonction récursive
-# 1: Nom du profil situé dans le dossier REP_PROFILS
+# 1: Nom de la configuration située dans le dossier REP_CONFIGS
 decouverte_services() {
-  fichier="${REP_PROFILS}/${1}.sh"
+  fichier="${REP_CONFIGS}/${1}.sh"
 
-  # Interruption si profil non trouvé.
+  # Interruption si configuration non trouvée.
   if [[ ! -f "${fichier}" ]]; then
     msg_debug "${fichier}"
-    msg_erreur_exit "Profil '${1}' non trouvé !"
+    msg_erreur_exit "Config. '${1}' non trouvée !"
   fi
 
   # Chargement des données fournies dans le fichier
@@ -74,11 +74,11 @@ decouverte_services() {
   # Les fichiers peuvent avoir un parent
   if [[ -n "${PARENT}" ]]; then
     # chargement du parent
-    profil_parent="${PARENT}"
+    parent_config="${PARENT}"
     unset PARENT
 
     # récupération des services du parent
-    decouverte_services "${profil_parent}"
+    decouverte_services "${parent_config}"
   fi
 }
 
@@ -155,22 +155,22 @@ copier_extras_service() {
   fi
 }
 
-# Liste des profils disponibles comme base pour les instances
-lister_profils() {
+# Liste des configs disponibles comme base pour les instances
+list_configs() {
   detection=false
 
-  msg_info "Liste des profils"
+  msg_info "Liste des configs"
 
-  for profil in `find "${REP_PROFILS}" -type f -name "*.sh" -printf "%f\n"`; do
-    # Exclusion du profil common
-    if [[ "${profil}" != "common.sh" ]]; then
-      msg "  - ${profil/.sh/}"
+  for config in `find "${REP_CONFIGS}" -type f -name "*.sh" -printf "%f\n"`; do
+    # Exclusion de la config. common
+    if [[ "${config}" != "common.sh" ]]; then
+      msg "  - ${config/.sh/}"
       detection=true
     fi
   done
 
   if ! ${detection}; then
-    msg_attention "Aucun profil trouvé."
+    msg_attention "Aucune config. trouvée."
   fi
 }
 
@@ -182,9 +182,9 @@ lister_services() {
 }
 
 
-# Traite le chargement d'un profil
-# 1: Nom du profil situé dans le dossier REP_PROFILS
-charger_profil() {
+# Traite le chargement d'une config.
+# 1: Nom de la config. située dans le dossier REP_CONFIGS
+load_config() {
   # Découverte de l'ensemble des services associés au fichier fourni
   decouverte_services "${1}"
 
@@ -192,8 +192,8 @@ charger_profil() {
   lister_services  
 }
 
-# Créé une instance à partir du profil donné en argument.
-# 1: Nom du profil situé dans le dossier REP_PROFILS
+# Créé une instance à partir de la config. donnée en argument.
+# 1: Nom de la config. située dans le dossier REP_CONFIGS
 # On va procéder en plusieurs étapes : 
 # - création du répertoire si besoin
 # - TODO: extinction de précédents conteneurs
@@ -298,9 +298,9 @@ supprimer_instance() {
 ## TESTS
 ###
 
-# On a besoin du répertoire contenant les profils
-if [[ ! -d "${REP_PROFILS}" ]]; then
-  msg_erreur_exit "Répertoire manquant : ${REP_PROFILS}"
+# On a besoin du répertoire contenant les configs
+if [[ ! -d "${REP_CONFIGS}" ]]; then
+  msg_erreur_exit "Répertoire manquant : ${REP_CONFIGS}"
 fi
 
 # Création du répertoire des instances s'il n'existe pas

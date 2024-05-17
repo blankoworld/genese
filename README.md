@@ -6,7 +6,7 @@ Il s'appuie sur Docker Compose pour cela. La finalité est d'avoir un dossier co
 
 Même s'il permet de faciliter cette génération, il ne fait pas tout !
 
-En effet, vous décrivez chaque service que vous utilisez dans un dossier à cet effet. Puis vous crééez un profil qui liste les services nécessaires. Et enfin vous utilisez la commande de base pour générer en quelques minutes votre environnement.
+En effet, vous décrivez chaque service que vous utilisez dans un dossier à cet effet. Puis vous crééez une configuration qui liste les services nécessaires. Et enfin vous utilisez la commande de base pour générer en quelques minutes votre environnement.
 
 C'est un outil initialement fait pour des développeurs d'application, afin de leur faciliter la création d'un nouvel environnement de travail à chaque nouveau ticket, pour chaque développeur, pour chaque projet.
 
@@ -17,11 +17,11 @@ Un exemple est donné dans les dossiers `configs.example` et `services.exemple`.
 * Création automatisée de conteneurs Docker reliés entre eux
 * Génération d'un fichier docker-compose.yml à partir de dossiers standardisés
 * Téléchargement automatique des dépôts Git pour les projets ciblés
-* Utilisation de fichiers de profils pour décrire les « dépendances » d'un projet (profil)
-* Héritage possible d'un profil à l'autre
+* Utilisation de fichiers de configs pour décrire les « dépendances » d'un projet (config)
+* Héritage possible d'une configuration à l'autre
 * Lancement d'une instance unique de Portainer pour la gestion des « stacks » générées
-* Choix possible d'un nom de stack pour chaque « projet » (profil) qu'on lance
-* Affichage en couleur de la procédure d'installation d'un projet (profil)
+* Choix possible d'un nom de stack pour chaque « projet » (config) qu'on lance
+* Affichage en couleur de la procédure d'installation d'un projet (config)
 * Utilisation de variables d'environnement pour surcharger le paramétrage de l'application
 * Détection de podman, docker et podman-compose/docker-compose
 * Listing des « instances » générées par le programme
@@ -56,7 +56,7 @@ Il est vivement conseillé de créer un fichier `.env` dont vous avez un exemple
 cp .env.exemple .env
 ```
 
-Ce fichier `.env` va contenir la configuration de l'application, notamment concernant la localisation du répertoire contenant les profils et du répertoire contenant les services.
+Ce fichier `.env` va contenir la configuration de l'application, notamment concernant la localisation du répertoire contenant les configs et du répertoire contenant les services.
 
 # Utilisation
 
@@ -70,9 +70,9 @@ Options disponibles :
 
 - `-h`, `--help` : Affichage de l'aide contextuelle
 - `-i`, `--instance` : Liste des instances installées
-- `-l`, `--liste` : Liste des profils disponibles
-- `-n`, `--nom` : Nom donné à l'instance à créer. Par défaut le même nom que le profil
-- `-p <nom>`, `--profil <nom>` : Utilise le profil `<nom>` comme base de déploiement
+- `-l`, `--liste` : Liste des configs disponibles
+- `-n`, `--nom` : Nom donné à l'instance à créer. Par défaut le même nom que la configuration
+- `-c <nom>`, `--config <nom>` : Utilise la configuration `<nom>` comme base de déploiement
 - `-s <nom>`, `--supprime <nom>` : Supprime l'instance `<nom>`
 
 # Installation et utilisation en une seule fois
@@ -85,7 +85,7 @@ cd test
 wget -q -O - "https://raw.githubusercontent.com/blankoworld/genese/develop/genese" |bash -s -- -p defaut
 ```
 
-Cette commande va télécharger la dernière version du logiciel dans le répertoire `test` et lancer l'installation du profil par défaut.
+Cette commande va télécharger la dernière version du logiciel dans le répertoire `test` et lancer l'installation de la configuration par défaut.
 
 C'est de cette manière qu'on permet d'avoir un outil intéressant pour des installations en un seul coup.
 
@@ -104,9 +104,9 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `compose.yml`
 - `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
-- `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`
+- `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `defaut`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
-- `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./configs.example`
+- `REP_CONFIGS` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
 - `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.exemple`
 - `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 
@@ -132,9 +132,9 @@ Voici une liste non exhaustive des variables disponibles :
 - `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
 - `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
 - `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
-- `LISTE_SERVICES` : tableau contenant la liste des services trouvés dans le profil choisi par l'utilisateur.
-- `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom du profil, sauf si l'utilisateur a choisi un nom spécifique)
-- `PROFIL` : nom du profil choisi par l'utilisateur
+- `LISTE_SERVICES` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
+- `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
+- `CONFIG` : nom de la config. choisie par l'utilisateur
 - `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
 - `REP_BASE` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
 - `REP_INSTALLATION` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/defaut/`.

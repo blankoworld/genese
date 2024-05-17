@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # genese: Outil pour générer des instances d'un à plusieurs projets via
-#   Docker Compose en utilisant des profils pour savoir quels services
+#   Docker Compose en utilisant des configs pour savoir quels services
 #   utiliser.
 #
 
@@ -22,9 +22,9 @@ Utilisation : ${PROGRAMME} [options]
 OPTIONS
   -h, --help                  Affichage de l'aide contextuelle
   -i, --instance              Liste des instances installées
-  -l, --liste                 Liste des profils disponibles
-  -n <nom>, --nom <nom>       Nom de l'instance à créer (s'utilise avec -p)
-  -p <nom>, --profil <nom>    Utilisation du profil donné
+  -l, --liste                 Liste des configs disponibles
+  -n <nom>, --nom <nom>       Nom de l'instance à créer (s'utilise avec -c)
+  -c <nom>, --config <nom>    Utilisation de la config donnée
   -s <nom>, --supprime <nom>  Suppression de l'instance donnée
 
 EXEMPLES
@@ -32,11 +32,11 @@ EXEMPLES
     # Afficher l'aide
     ${PROGRAMME} -h
 
-    # Créer une instance en utilisant le profil 'defaut'
-    ${PROGRAMME} -p defaut
+    # Créer une instance en utilisant la config. 'defaut'
+    ${PROGRAMME} -c defaut
 
-    # Créer une instance 'super_instance' en utilisant le profil 'defaut'
-    ${PROGRAMME} -p defaut -n super_instance
+    # Créer une instance 'super_instance' en utilisant la configuration 'defaut'
+    ${PROGRAMME} -c defaut -n super_instance
 
     # Lister les instances ainsi créées
     ${PROGRAMME} -i
@@ -69,7 +69,7 @@ analyse_options() {
         lister_instances
         ;;
       -l | --liste)
-        lister_profils
+        list_configs
         ;;
       -n | --nom)
         erreur_parametre="Aucun nom d'instance donné pour le paramètre '--nom'."
@@ -84,9 +84,9 @@ analyse_options() {
           msg_erreur_exit "${erreur_parametre}"
         fi
         ;;
-      -p | --profil)
+      -c | --config)
         if [[ -n "${2}" ]]; then
-          PROFIL="${2}"
+          CONFIG="${2}"
         fi
         # Marqueur permettant de savoir qu'on souhaite lancer une création d'instance
         CREATION_INSTANCE=true
@@ -212,8 +212,8 @@ analyse_options $@
 
 # Cas de la création d'une instance
 if "${CREATION_INSTANCE}"; then
-  charger_profil "${PROFIL}"
-  NOM_INSTANCE="${NOM_INSTANCE_CHOISI:-$PROFIL}"
+  load_config "${CONFIG}"
+  NOM_INSTANCE="${NOM_INSTANCE_CHOISI:-$CONFIG}"
   creer_instance "${NOM_INSTANCE}"
   # Traitement post-installation
   lancer_portainer
@@ -222,7 +222,7 @@ if "${CREATION_INSTANCE}"; then
 elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then
   # Cas où l'utilisateur a donné le nom d'une instance, sans demander
   # la création d'une instance
-  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE_CHOISI}', mais aucun profil donné. Faites '${PROGRAMME} -l' pour lister les profils existants."
+  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE_CHOISI}', mais aucune configuration donnée. Faites '${PROGRAMME} -l' pour lister les configs existantes."
 fi
 
 #####
