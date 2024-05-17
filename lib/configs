@@ -15,7 +15,7 @@ PROFIL="${PROFIL:-defaut}"
 # Répertoire dans lequel seront installées les instances
 REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
 # Répertoire dans lequel trouver les profils
-REP_PROFILS="${REP_PROFILS:-${REP_BASE}/profils.exemple}"
+REP_PROFILS="${REP_PROFILS:-${REP_BASE}/configs.example}"
 # Répertoire d'installation de l'instance (soit pour la création, soit pour la suppression). Initialisé quand nécessaire.
 REP_INSTALLATION=""
 

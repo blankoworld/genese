@@ -10,7 +10,7 @@ En effet, vous décrivez chaque service que vous utilisez dans un dossier à cet
 
 C'est un outil initialement fait pour des développeurs d'application, afin de leur faciliter la création d'un nouvel environnement de travail à chaque nouveau ticket, pour chaque développeur, pour chaque projet.
 
-Un exemple est donné dans les dossiers `profils.exemple` et `services.exemple`.
+Un exemple est donné dans les dossiers `configs.example` et `services.exemple`.
 
 # Fonctionnalités
 
@@ -106,7 +106,7 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `PROFIL` : Nom du profil par défaut. Valeur par défaut : `defaut`
 - `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
-- `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./profils.exemple`
+- `REP_PROFILS` : Chemin vers le répertoire qui contient les profils à utiliser. Valeur par défaut : `./configs.example`
 - `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.exemple`
 - `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 

@@ -193,7 +193,7 @@ source "${REP_BASE}/lib/commun"
 source "${REP_BASE}/lib/git"
 source "${REP_BASE}/lib/docker"
 source "${REP_BASE}/lib/portainer"
-source "${REP_BASE}/lib/profils"
+source "${REP_BASE}/lib/configs"
 
 # On a besoin du répertoire des services
 if [[ ! -d "${REP_SERVICES}" ]]; then
