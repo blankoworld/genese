@@ -162,8 +162,8 @@ lister_profils() {
   msg_info "Liste des profils"
 
   for profil in `find "${REP_PROFILS}" -type f -name "*.sh" -printf "%f\n"`; do
-    # Exclusion du profil commun
-    if [[ "${profil}" != "commun.sh" ]]; then
+    # Exclusion du profil common
+    if [[ "${profil}" != "common.sh" ]]; then
       msg "  - ${profil/.sh/}"
       detection=true
     fi

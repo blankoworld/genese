@@ -1,4 +1,4 @@
-PARENT="commun"
+PARENT="common"
 
 SERVICES=(
     "adminer"
