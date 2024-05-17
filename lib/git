@@ -1,33 +1,32 @@
 #!/usr/bin/env bash
 #
-# Dépendance de cette bibliothèque : 
+# Lib dependencies:
 # - common
 
 #####
-## FONCTIONS
+## FUNCTIONS
 ###
 
-# Récupère ou met à jour le dépôt Git fourni en paramètre 1, avec la 
-# branche en paramètre 2 sur le répertoire de destination fourni en
-# paramètre 3.
-# 1: adresse réticulaire du dépôt à récupérer (ou mettre à jour si existant)
-# 2: branche à récupérer
-# 3: destination où copier les fichiers
+# Fetch or update Git repository given in parameter '1', with branch as
+# parameter 2 and target directory as parameter 3.
+# 1: repository URL to fetch (or update if exist)
+# 2: branch to fetch
+# 3: directory where files would be copied
 git_clone() {
-  adresse="${1}"
-  branche="${2}"
-  destination="${3}"
+  address="${1}"
+  branch="${2}"
+  target="${3}"
 
-  # Si le répertoire existe, on met seulement à jour le dépôt
-  if [[ -d "${destination}" ]]; then
-    msg_info "Git : MàJ du dépôt ${destination}"
-    cd "${destination}" && git pull -q && cd - &>/dev/null \
-      && msg_succes "Mise à jour réussie !"
+  # If target directory existe, we just update the repository.
+  if [[ -d "${target}" ]]; then
+    msg_info "Git: updating regarding ${target} repository"
+    cd "${target}" && git pull -q && cd - &>/dev/null \
+      && msg_succes "Successful update!"
   else
-    msg_info "Git : Clonage de '${adresse}' (branche : ${branche}) dans ${destination}"
-    git clone -q --branch="${branche}" "${adresse}" "${destination}" \
-      && msg_succes "Clonage réussi !" \
-      || msg_erreur_exit "git clone de '${adresse}' (branche : ${branche})"
+    msg_info "Git: Cloning from '${address}' (branch: ${branch}) to ${target}"
+    git clone -q --branch="${branch}" "${address}" "${target}" \
+      && msg_succes "Clone: successful!" \
+      || msg_erreur_exit "failed to clone '${address}' (branch: ${branch})"
   fi
 }
 
