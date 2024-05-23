@@ -76,12 +76,12 @@ analyse_options() {
         if [[ -n "${2}" ]]; then
           # Vérification que l'argument ne démarre pas par un tiret ("-")
           if [[ "${2}" == -* ]]; then
-            msg_erreur_exit "${erreur_parametre}"
+            err_msg_and_exit "${erreur_parametre}"
           fi
           # Initialisation du nom de l'instance (choix fait par l'utilisateur)
           NOM_INSTANCE_CHOISI="${2}"
         else
-          msg_erreur_exit "${erreur_parametre}"
+          err_msg_and_exit "${erreur_parametre}"
         fi
         ;;
       -c | --config)
@@ -96,7 +96,7 @@ analyse_options() {
           # Nom de l'instance à supprimer
           NOM_INSTANCE="${2}"
         else
-          msg_erreur_exit "Aucune instance donnée en paramètre !"
+          err_msg_and_exit "Aucune instance donnée en paramètre !"
         fi
         supprimer_instance "${NOM_INSTANCE}"
         ;;
@@ -128,9 +128,9 @@ message_post_creation_instance() {
   executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
   # Affichage des infos de portainer
-  msg_info "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${GRAS}${COULEUR_ROUGE}http://localhost:${PORT_PORTAINER}/${COULEUR_DEFAUT}"
+  info_msg "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${BOLD}${RED_COLOR}http://localhost:${PORT_PORTAINER}/${DEFAULT_COLOR}"
 
-  msg_succes "Instance '${1}' : Installation terminée."
+  success_msg "Instance '${1}' : Installation terminée."
 }
 
 # Essaie de charger le reste des fichiers de ce script en utilisant SOURCE
@@ -197,7 +197,7 @@ source "${REP_BASE}/lib/configs"
 
 # On a besoin du répertoire des services
 if [[ ! -d "${REP_SERVICES}" ]]; then
-  msg_erreur_exit "Répertoire manquant : ${REP_SERVICES}"
+  err_msg_and_exit "Répertoire manquant : ${REP_SERVICES}"
 fi
 
 # Nom de l'instance à utiliser
@@ -222,7 +222,7 @@ if "${CREATION_INSTANCE}"; then
 elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then
   # Cas où l'utilisateur a donné le nom d'une instance, sans demander
   # la création d'une instance
-  msg_erreur_exit "Nom d'instance: '${NOM_INSTANCE_CHOISI}', mais aucune configuration donnée. Faites '${PROGRAMME} -l' pour lister les configs existantes."
+  err_msg_and_exit "Nom d'instance: '${NOM_INSTANCE_CHOISI}', mais aucune configuration donnée. Faites '${PROGRAMME} -l' pour lister les configs existantes."
 fi
 
 #####

@@ -40,7 +40,7 @@ test_docker_present() {
     fi
   done
   if [[ -z "${CMD_DOCKER}" ]]; then
-    msg_erreur_exit "Commande DOCKER : non trouvée !"
+    err_msg_and_exit "Commande DOCKER : non trouvée !"
   fi
 }
 
@@ -57,15 +57,15 @@ test_docker_compose_present() {
     ${cmd_compose} version &> /dev/null && export CMD_DOCKER_COMPOSE="${cmd_compose}"
   fi
   if [[ -z "${CMD_DOCKER_COMPOSE}" ]];  then
-    msg_erreur_exit "Commande DOCKER COMPOSE : non trouvée !"
+    err_msg_and_exit "Commande DOCKER COMPOSE : non trouvée !"
   fi
 }
 
 # Vérification du service Docker
 test_service_docker_en_execution() {
   $CMD_DOCKER info &> /dev/null \
-    && msg_succes "DOCKER : présent et lancé !" \
-    || msg_erreur_exit "DOCKER : manquant ! Vérifiez qu'il soit présent et lancé."
+    && success_msg "DOCKER : présent et lancé !" \
+    || err_msg_and_exit "DOCKER : manquant ! Vérifiez qu'il soit présent et lancé."
 }
 
 # Initialisation de la variable globale contenant l'adresse du fichier
@@ -100,9 +100,9 @@ creer_fichier_docker_compose() {
 
   # contrôle du répertoire
   if [[ -z "${1}" ]]; then
-    msg_erreur_exit "Aucun répertoire donné"
+    err_msg_and_exit "Aucun répertoire donné"
   elif [[ ! -d "${1}" ]]; then
-    msg_erreur_exit "Répertoire non trouvé : ${1}"
+    err_msg_and_exit "Répertoire non trouvé : ${1}"
   fi
 
   initialisation_variable_docker_compose "${1}"
@@ -116,27 +116,27 @@ creer_fichier_docker_compose() {
 
     # contrôle existance du fichier de description du service
     if [[ ! -f "${fichier_service}" ]]; then
-      msg_erreur_exit "Le fichier ${fichier_service} n'existe pas !"
+      err_msg_and_exit "Le fichier ${fichier_service} n'existe pas !"
     fi
 
     # concaténation du contenu avec le fichier final
     cat "${fichier_service}"|sed -e 's#^#  #g' >> "${FICHIER_DOCKER_COMPOSE}"
   done
 
-  msg_succes "Fichier Docker Compose: ${FICHIER_DOCKER_COMPOSE}"
+  success_msg "Fichier Docker Compose: ${FICHIER_DOCKER_COMPOSE}"
 }
 
 # Création d'un fichier .env dans le répertoire donné en paramètre
 # 1: Répertoire d'installation du fichier .env
 creer_fichier_env() {
   if [[ ! -d "${1}" ]]; then
-    msg_erreur_exit "Création d'un fichier .env : Destination '${1}' inexistante."
+    err_msg_and_exit "Création d'un fichier .env : Destination '${1}' inexistante."
   fi
 
   local destination="${1}"
   local fichier_env="${destination}/.env"
 
-  msg_info ".env : mémorisation des variables d'environnement nécessaires."
+  info_msg ".env : mémorisation des variables d'environnement nécessaires."
 
   # Utilisation du nom de l'utilisateur comme préfixe,
   # agrémenté du nom du répertoire d'installation (qui est censé être unique…)
@@ -163,12 +163,12 @@ test_existence_fichier_compose() {
   fichier="${1}"
 
   if [[ -z "${fichier}" ]]; then
-    msg_erreur_exit "Aucun fichier Docker Compose fourni."
+    err_msg_and_exit "Aucun fichier Docker Compose fourni."
   fi
 
   # Si le fichier n'existe pas, on s'arrête !
   if [[ ! -f "${fichier}" ]]; then
-    msg_erreur_exit "Fichier Docker Compose non trouvé : ${fichier}"
+    err_msg_and_exit "Fichier Docker Compose non trouvé : ${fichier}"
   fi
 }
 
@@ -185,11 +185,11 @@ demarre_conteneurs() {
   test_service_docker_en_execution
 
   # Démarrage des conteneurs
-  msg_info "Démarrage des conteneurs Docker"
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" up -d || msg_erreur_exit \
+  info_msg "Démarrage des conteneurs Docker"
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" up -d || err_msg_and_exit \
     "${MSG_ERR_DOCKER}"
 
-  msg_succes "Conteneurs Docker lancés"
+  success_msg "Conteneurs Docker lancés"
 }
 
 # Liste des conteneurs liés au dossier donné (contenant un fichier
@@ -205,8 +205,8 @@ lister_conteneurs() {
   test_service_docker_en_execution
 
   # Liste des conteneurs
-  msg_info "Liste des conteneurs Docker lancés"
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" ps || msg_erreur_exit \
+  info_msg "Liste des conteneurs Docker lancés"
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" ps || err_msg_and_exit \
     "${MSG_ERR_DOCKER}"
 }
 
@@ -223,13 +223,13 @@ suppression_conteneurs() {
   test_service_docker_en_execution
 
   # Arrêt des conteneurs Docker
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" kill || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" kill || err_msg_and_exit \
     "${MSG_ERR_DOCKER}"
   # Suppression des conteneurs
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" down || msg_erreur_exit \
+  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" down || err_msg_and_exit \
     "${MSG_ERR_DOCKER}"
 
-  msg_succes "Arrêt des conteneurs Docker"
+  success_msg "Arrêt des conteneurs Docker"
 }
 
 #####

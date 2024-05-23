@@ -4,7 +4,7 @@
 * utiliser CMD_DOCKER, CMD_GIT, etc. (+ remplacer dans les modules) pour vérifier la présence des outils
 * vérification avant lancement de la présence des outils utiles (ou bien au compte goutte ?)
 * Encart "Fonctionnement" dans le README pour expliquer concrètement ce qui se lance et dans quel ordre (pour saisir comment on peut utiliser cet outil)
-* Documentation sur les fonctions disponibles à l'utilisateur pour ses scripts (msg_info, etc.)
+* Documentation sur les fonctions disponibles à l'utilisateur pour ses scripts (info_msg, etc.)
 * Initialiser la variable de DEBUG
 * Ajouter une variable d'environnement pour choisir l'image Portainer qu'on souhaite utiliser
 * Même idée de surcharge de variable avec XYZ_SOURCE que BRANCHE_XYZ ?

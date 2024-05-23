@@ -4,4 +4,4 @@
 
 adminer_port=`docker-compose -f "${FICHIER_DOCKER_COMPOSE}" port adminer 8080 |cut -d ":" -f 2`
 
-msg_info "Pour accéder à Adminer, allez sur ${GRAS}${COULEUR_ROUGE}http://localhost:${adminer_port}/?pgsql=db&username=postgres${COULEUR_DEFAUT}"
+info_msg "Pour accéder à Adminer, allez sur ${BOLD}${RED_COLOR}http://localhost:${adminer_port}/?pgsql=db&username=postgres${DEFAULT_COLOR}"

@@ -48,8 +48,8 @@ decouverte_services() {
 
   # Interruption si configuration non trouvée.
   if [[ ! -f "${fichier}" ]]; then
-    msg_debug "${fichier}"
-    msg_erreur_exit "Config. '${1}' non trouvée !"
+    debug_msg "${fichier}"
+    err_msg_and_exit "Config. '${1}' non trouvée !"
   fi
 
   # Chargement des données fournies dans le fichier
@@ -89,7 +89,7 @@ executer_script_services() {
     # On exécute le script donné pour l'ensemble des services fournis
     for service in ${LISTE_SERVICES[@]}; do
       local fichier="${REP_SERVICES}/${service}/${1}"
-      executer_script "${fichier}" "Service ${service} : exécution script '${1}'"
+      script_exec "${fichier}" "Service ${service} : exécution script '${1}'"
     done
   fi
 }
@@ -99,7 +99,7 @@ executer_script_services() {
 charger_depot_service() {
   # Message d'erreur si on a pas de répertoire d'installation renseigné
   if [[ -z "${REP_INSTALLATION}" ]]; then
-    msg_erreur_exit "${ERR_400}"
+    err_msg_and_exit "${ERR_400}"
   fi
 
   # initialisation de variables
@@ -128,7 +128,7 @@ charger_depot_service() {
 charger_fichiers_services() {
   # Si le répertoire d'installation n'est pas connu on renvoie une erreur.
   if [[ -z "${REP_INSTALLATION}" ]]; then
-    msg_erreur_exit "${ERR_400}"
+    err_msg_and_exit "${ERR_400}"
   fi
 
   # 1/ Chargement des dépôts Git de chaque service (uniquement si existant)
@@ -149,7 +149,7 @@ copier_extras_service() {
   local origine="${REP_SERVICES}/${service}/${NOM_DOSSIER_EXTRAS}"
 
   if [[ -d "${origine}" ]]; then
-    msg_info "${service}: Copie des fichiers du dossier extras"
+    info_msg "${service}: Copie des fichiers du dossier extras"
     # On ajoute une étoile après les guillemets pour prendre tous les fichiers
     cp -r "${origine}/"* "${REP_INSTALLATION}/"
   fi
@@ -159,7 +159,7 @@ copier_extras_service() {
 list_configs() {
   detection=false
 
-  msg_info "Liste des configs"
+  info_msg "Liste des configs"
 
   for config in `find "${REP_CONFIGS}" -type f -name "*.sh" -printf "%f\n"`; do
     # Exclusion de la config. common
@@ -170,14 +170,14 @@ list_configs() {
   done
 
   if ! ${detection}; then
-    msg_attention "Aucune config. trouvée."
+    warning_msg "Aucune config. trouvée."
   fi
 }
 
 # Listing des services trouvés
 lister_services() {
   for service in ${LISTE_SERVICES[@]}; do
-    msg_info "Service : ${service}"
+    info_msg "Service : ${service}"
   done
 }
 
@@ -210,7 +210,7 @@ creer_instance() {
 
   # Vérification de la présence du dossier
   if [[ ! -d "${REP_INSTALLATION}" ]]; then
-    mkdir -p "${REP_INSTALLATION}" && msg_succes "Création répertoire '${REP_INSTALLATION}'"
+    mkdir -p "${REP_INSTALLATION}" && success_msg "Création répertoire '${REP_INSTALLATION}'"
   fi
 
   # TODO: si le dossier existait déjà, il faut couper les conteneurs
@@ -243,10 +243,10 @@ lister_instances() {
   detection=false
 
   if [[ ! -d "${REP_INSTANCES}" ]]; then
-    msg_erreur_exit "Répertoire d'instance manquant : ${REP_INSTANCES}"
+    err_msg_and_exit "Répertoire d'instance manquant : ${REP_INSTANCES}"
   fi
 
-  msg_info "Liste des instances"
+  info_msg "Liste des instances"
 
   # Liste des dossiers du répertoire des instances
   for instance in `ls "${REP_INSTANCES}"`; do
@@ -258,7 +258,7 @@ lister_instances() {
   done
 
   if ! ${detection}; then
-    msg_attention "Aucune instance trouvée."
+    warning_msg "Aucune instance trouvée."
   fi
 }
 
@@ -269,16 +269,16 @@ supprimer_instance() {
 
   # Contrôle de l'existence de l'instance
   if [[ ! -d "${REP_INSTALLATION}" ]]; then
-    msg_erreur_exit "Instance non trouvée : ${1} (dans ${REP_INSTALLATION})"
+    err_msg_and_exit "Instance non trouvée : ${1} (dans ${REP_INSTALLATION})"
   fi
 
   # Alerte à l'utilisateur pour éviter les erreurs
-  msg_attention "Êtes-vous sûr de vouloir supprimer l'instance ${REP_INSTALLATION} ? (o/N)"
+  warning_msg "Êtes-vous sûr de vouloir supprimer l'instance ${REP_INSTALLATION} ? (o/N)"
   read reponse
 
   case "${reponse}" in
     o|O)
-      msg_info "Suppression de : ${REP_INSTALLATION}"
+      info_msg "Suppression de : ${REP_INSTALLATION}"
 
       # Extinction d'éventuels conteneurs lancés
       suppression_conteneurs "${REP_INSTALLATION}"
@@ -286,10 +286,10 @@ supprimer_instance() {
       # Suppression de l'instance
       rm -rf "${REP_INSTALLATION}"
 
-      msg_succes "Instance supprimée : ${1} (dans ${REP_INSTALLATION})"
+      success_msg "Instance supprimée : ${1} (dans ${REP_INSTALLATION})"
       ;;
     *)
-      msg_info "Aucune instance supprimée."
+      info_msg "Aucune instance supprimée."
       ;;
   esac
 }
@@ -300,7 +300,7 @@ supprimer_instance() {
 
 # On a besoin du répertoire contenant les configs
 if [[ ! -d "${REP_CONFIGS}" ]]; then
-  msg_erreur_exit "Répertoire manquant : ${REP_CONFIGS}"
+  err_msg_and_exit "Répertoire manquant : ${REP_CONFIGS}"
 fi
 
 # Création du répertoire des instances s'il n'existe pas

@@ -19,14 +19,14 @@ git_clone() {
 
   # If target directory existe, we just update the repository.
   if [[ -d "${target}" ]]; then
-    msg_info "Git: updating regarding ${target} repository"
+    info_msg "Git: updating regarding ${target} repository"
     cd "${target}" && git pull -q && cd - &>/dev/null \
-      && msg_succes "Successful update!"
+      && success_msg "Successful update!"
   else
-    msg_info "Git: Cloning from '${address}' (branch: ${branch}) to ${target}"
+    info_msg "Git: Cloning from '${address}' (branch: ${branch}) to ${target}"
     git clone -q --branch="${branch}" "${address}" "${target}" \
-      && msg_succes "Clone: successful!" \
-      || msg_erreur_exit "failed to clone '${address}' (branch: ${branch})"
+      && success_msg "Clone: successful!" \
+      || err_msg_and_exit "failed to clone '${address}' (branch: ${branch})"
   fi
 }
 
