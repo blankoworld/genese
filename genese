@@ -6,7 +6,7 @@
 #
 
 PROGRAMME=`basename $0 .sh`
-REP_BASE=$(cd `dirname $0` && pwd)
+BASE_DIR=$(cd `dirname $0` && pwd)
 
 #####
 ## VARIABLES
@@ -66,7 +66,7 @@ analyse_options() {
         aide
         ;;
       -i | --instance)
-        lister_instances
+        instances_list
         ;;
       -l | --liste)
         list_configs
@@ -98,7 +98,7 @@ analyse_options() {
         else
           err_msg_and_exit "Aucune instance donnée en paramètre !"
         fi
-        supprimer_instance "${NOM_INSTANCE}"
+        delete_instance "${NOM_INSTANCE}"
         ;;
     esac
     # Décalage de l'option pour parcourir la suivante
@@ -109,9 +109,9 @@ analyse_options() {
 # Charge les données utilisateurs
 configure() {
   # Configuration par l'utilisateur ? Si oui, on charge !
-  if [[ -f "${REP_BASE}/.env" ]]; then
+  if [[ -f "${BASE_DIR}/.env" ]]; then
     # Charge la liste des variables d'env. personnalisées de l'utilisateur
-    source "${REP_BASE}/.env"
+    source "${BASE_DIR}/.env"
   fi
 }
 
@@ -120,12 +120,12 @@ configure() {
 # 1: Nom de l'instance
 message_post_creation_instance() {
   # Liste des conteneurs de l'instance choisie
-  # REP_INSTALLATION a été créé dans creer_instance
-  lister_conteneurs "${REP_INSTALLATION}"
+  # INSTALL_DIR a été créé dans create_instance
+  lister_conteneurs "${INSTALL_DIR}"
 
   # Exécution pour chaque service du fichier 'declencheur_message_final'
   # s'il existe.
-  executer_script_services "${NOM_DECLENCHEUR_POST_INSTALLATION}"
+  run_services_script "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
   # Affichage des infos de portainer
   info_msg "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${BOLD}${RED_COLOR}http://localhost:${PORT_PORTAINER}/${DEFAULT_COLOR}"
@@ -136,20 +136,20 @@ message_post_creation_instance() {
 # Essaie de charger le reste des fichiers de ce script en utilisant SOURCE
 auto_chargement() {
   # Soit le dépôt GIT existe et on le met à jour,
-  local git_rep="${REP_BASE}/.git"
+  local git_rep="${BASE_DIR}/.git"
   if [[ -d "${git_rep}" ]]; then
-    cd "${REP_BASE}" && git pull -q && cd - &>/dev/null
+    cd "${BASE_DIR}" && git pull -q && cd - &>/dev/null
   # soit nous partons du script seul et on télécharge le reste
   else
     # le répertoire de base devient un autre répertoire
-    REP_BASE="${REP_BASE}/.${PROGRAMME}"
+    BASE_DIR="${BASE_DIR}/.${PROGRAMME}"
     # En ce cas 2 possibilités : 
     # 1/ le répertoire spécial existe et on met à jour
     # 2/ le répertoire spécial n'existe pas et on clone dedans
-    if [[ -d "${REP_BASE}" ]]; then
-      cd "${REP_BASE}" && git pull && cd - &>/dev/null
+    if [[ -d "${BASE_DIR}" ]]; then
+      cd "${BASE_DIR}" && git pull && cd - &>/dev/null
     else
-      git clone -q "${SOURCE}" "${REP_BASE}"
+      git clone -q "${SOURCE}" "${BASE_DIR}"
     fi
     # Le répertoire de base ayant changé, on recharge la configuration
     configure
@@ -183,17 +183,17 @@ NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-hook_fin
 
 # Chargement des variables dépendantes du répertoire de BASE
 # Répertoire dans lequel trouver les services
-REP_SERVICES="${REP_SERVICES:-${REP_BASE}/services.example}"
+REP_SERVICES="${REP_SERVICES:-${BASE_DIR}/services.example}"
 # Répertoire dans lequel trouver les modèles (template) pour un certain
 # nombre de fichiers. Volontairement non modifiable par variable d'env.
-REP_TEMPLATES="${REP_BASE}/templates"
+REP_TEMPLATES="${BASE_DIR}/templates"
 
 # Load libraries
-source "${REP_BASE}/lib/common"
-source "${REP_BASE}/lib/git"
-source "${REP_BASE}/lib/docker"
-source "${REP_BASE}/lib/portainer"
-source "${REP_BASE}/lib/configs"
+source "${BASE_DIR}/lib/common"
+source "${BASE_DIR}/lib/git"
+source "${BASE_DIR}/lib/docker"
+source "${BASE_DIR}/lib/portainer"
+source "${BASE_DIR}/lib/configs"
 
 # On a besoin du répertoire des services
 if [[ ! -d "${REP_SERVICES}" ]]; then
@@ -214,7 +214,7 @@ analyse_options $@
 if "${CREATION_INSTANCE}"; then
   load_config "${CONFIG}"
   NOM_INSTANCE="${NOM_INSTANCE_CHOISI:-$CONFIG}"
-  creer_instance "${NOM_INSTANCE}"
+  create_instance "${NOM_INSTANCE}"
   # Traitement post-installation
   lancer_portainer
   # Affichage du message final d'installation pour l'instance choisie

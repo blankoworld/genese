@@ -3,4 +3,4 @@ php:
   ports:
     - 0.0.0.0:${PORT_MEMORY_GAME:-}:80
   volumes:
-    - ${REP_INSTALLATION}/memory_game:/var/www/html
+    - ${INSTALL_DIR}/memory_game:/var/www/html

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Dépendance de cette bibliothèque : 
+# This library dependencies:
 # - common
 # - docker
 # - git
@@ -9,160 +9,157 @@
 ## VARIABLES
 ###
 
-# Configuration par défaut pour créer des instances
+# Default configuration to create instances
 CONFIG="${CONFIG:-default}"
 
-# Répertoire dans lequel seront installées les instances
-REP_INSTANCES="${REP_INSTANCES:-${REP_BASE}/instances}"
-# Répertoire dans lequel trouver les configs
-REP_CONFIGS="${REP_CONFIGS:-${REP_BASE}/configs.example}"
-# Répertoire d'installation de l'instance (soit pour la création, soit pour la suppression). Initialisé quand nécessaire.
-REP_INSTALLATION=""
+# Directory in which instances will be installed
+INSTANCES_DIR="${INSTANCES_DIR:-${BASE_DIR}/instances}"
+# Directory where to find configs
+CONFIGS_DIR="${CONFIGS_DIR:-${BASE_DIR}/configs.example}"
+# Instance installation directory (either for creation or deletion).
+# Initialized when needed.
+INSTALL_DIR=""
 
-# Liste des services trouvés
-LISTE_SERVICES=()
+# List of services found
+SERVICES_LIST=()
 
-# Nom des différents déclencheurs pre/post docker, build, etc.
-NOM_DECLENCHEUR_PRE_DOCKER="${NOM_DECLENCHEUR_PRE_DOCKER:-hook_pre_docker.sh}"
-NOM_DECLENCHEUR_POST_DOCKER="${NOM_DECLENCHEUR_POST_DOCKER:-hook_post_docker.sh}"
+# Name of different pre/post triggers, build, etc.
+PRE_DOCKER_HOOK_NAME="${PRE_DOCKER_HOOK_NAME:-hook_pre_docker.sh}"
+POST_DOCKER_HOOK_NAME="${POST_DOCKER_HOOK_NAME:-hook_post_docker.sh}"
 
-# Nom du fichier contenant les informations du dépôt à télécharger
-NOM_FICHIER_SOURCE="${NOM_FICHIER_SOURCE:-source}"
+# Name of file containing the repository information to download
+REPO_FILENAME="${REPO_FILENAME:-repo}"
 
-# Nom du dossier 'extras' contenant des fichiers à copier "tels quels" dans
-# le répertoire de destination
-NOM_DOSSIER_EXTRAS="${NOM_DOSSIER_EXTRAS:-extras}"
+# 'extras' directory name containing files to copy as is in install dir
+EXTRAS_DIRNAME="${EXTRAS_DIRNAME:-extras}"
 
-# Messages d'erreurs
-ERR_400="La variable REP_INSTALLATION est vide."
+# Error messages
+ERR_400="The INSTALL_DIR variable is empty."
 
 ####
-## FONCTIONS
+## FUNCTIONS
 ###
 
-# Découvre les services associés dans le fichier fourni
-# Fonction récursive
-# 1: Nom de la configuration située dans le dossier REP_CONFIGS
-decouverte_services() {
-  fichier="${REP_CONFIGS}/${1}.sh"
+# Discover associated services in the provided file
+# Recursive function
+# 1: Configuration filename in CONFIGS_DIR folder
+discover_services() {
+  filepath="${CONFIGS_DIR}/${1}.sh"
 
-  # Interruption si configuration non trouvée.
-  if [[ ! -f "${fichier}" ]]; then
-    debug_msg "${fichier}"
-    err_msg_and_exit "Config. '${1}' non trouvée !"
+  # Interruption if configuration not found.
+  if [[ ! -f "${filepath}" ]]; then
+    debug_msg "${filepath}"
+    err_msg_and_exit "'${1}' config. not found!"
   fi
 
-  # Chargement des données fournies dans le fichier
-  source "${fichier}"
+  # Load data provided in file
+  source "${filepath}"
 
-  # Enregistrement des services fournis si la variable existe
+  # Recording of services provided if variable exists
   if [[ -n "${SERVICES}" ]]; then
-    # chargement du tableau
-    les_services="${SERVICES[@]}"
+    # loading table
+    multi_services="${SERVICES[@]}"
 
-    # Comme nous sommes dans une récursive, on interrompt le processus en
-    # supprimant la variable SERVICES
+    # As we are in a recursive, we interruppt the process by deleting SERVICES
     unset SERVICES
 
-    # Enregistrement
-    for service in "${les_services[@]}"; do
-      LISTE_SERVICES+=( "${service}" )
+    # Keep in memory services list
+    for service in "${multi_services[@]}"; do
+      SERVICES_LIST+=( "${service}" )
     done
 
   fi
 
-  # Les fichiers peuvent avoir un parent
+  # Config. files can have a parent config.
   if [[ -n "${PARENT}" ]]; then
-    # chargement du parent
+    # loading parent file
     parent_config="${PARENT}"
     unset PARENT
 
-    # récupération des services du parent
-    decouverte_services "${parent_config}"
+    # Fetch parent ' services
+    discover_services "${parent_config}"
   fi
 }
 
-# Exécute le script donné en paramètre pour chaque service
-# 1: nom du fichier à exécuter dans le service
-executer_script_services() {
+# For each service: runs the given script (given as a parameter)
+# 1: script filename to run for each service
+run_services_script() {
   if [[ -n "${1}" ]]; then
-    # On exécute le script donné pour l'ensemble des services fournis
-    for service in ${LISTE_SERVICES[@]}; do
-      local fichier="${REP_SERVICES}/${service}/${1}"
-      script_exec "${fichier}" "Service ${service} : exécution script '${1}'"
+    for service in ${SERVICES_LIST[@]}; do
+      local filepath="${REP_SERVICES}/${service}/${1}"
+      script_exec "${filepath}" "${service} service: run '${1}' script"
     done
   fi
 }
 
-# Extrait les infos données dans le fichier 'source' puis télécharge le dépôt
-# 1: nom du service étudié
-charger_depot_service() {
-  # Message d'erreur si on a pas de répertoire d'installation renseigné
-  if [[ -z "${REP_INSTALLATION}" ]]; then
+# Extract information from repository filename and download it
+# 1: service name
+load_service_repo() {
+  # If no installation directory given: return an error
+  if [[ -z "${INSTALL_DIR}" ]]; then
     err_msg_and_exit "${ERR_400}"
   fi
 
-  # initialisation de variables
+  # variable initialization
   local service="${1}"
-  local fichier="${REP_SERVICES}/${service}/${NOM_FICHIER_SOURCE}"
-  local destination="${REP_INSTALLATION}/${service}"
+  local filepath="${REP_SERVICES}/${service}/${REPO_FILENAME}"
+  local target_dir="${INSTALL_DIR}/${service}"
 
   # Chargement des informations si le fichier existe
-  if [[ -f "${fichier}" ]]; then
-    local branche=$(cat "${fichier}"|cut -d ' ' -f 1)
-    local adresse=$(cat "${fichier}"|cut -d ' ' -f 2-)
+  if [[ -f "${filepath}" ]]; then
+    local branch=$(cat "${filepath}"|cut -d ' ' -f 1)
+    local address=$(cat "${filepath}"|cut -d ' ' -f 2-)
 
-    # Vérif. branche à charger (BRANCHE_nomService supplante la valeur)
-    local variable=$(echo "BRANCHE_${service^^}"|tr '[:lower:]' '[:upper:]'|sed -e 's/-/_/g')
-    branche="${!variable:-${branche}}"
+    # Check branch to load (serviceName_BRANCH override this value)
+    local variable=$(echo "${service^^}_BRANCH"|tr '[:lower:]' '[:upper:]'|sed -e 's/-/_/g')
+    branch="${!variable:-${branch}}"
 
-    git_clone "${adresse}" "${branche}" "${destination}"
+    git_clone "${address}" "${branch}" "${target_dir}"
   fi
 }
 
-# Charge les fichiers de chaque service dans le rép. d'installation.
-# Se fait en plusieurs étapes : 
-# 1/ d'abord on charge les dépôts Git de chaque service
-# 2/ ensuite on charge le dossier extras par dessus pour éventuellement écraser
-# les fichiers existants (sorte de "patch" qu'on choisit d'appliquer)
-charger_fichiers_services() {
-  # Si le répertoire d'installation n'est pas connu on renvoie une erreur.
-  if [[ -z "${REP_INSTALLATION}" ]]; then
+# Loads files from each service into the installation directory
+# This is done in several stages:
+# 1/ first we clone each service Git repository
+# 2/ then we load extra folder by overriding existing files/directories
+# (As we would apply a patch)
+load_services_files() {
+  # Return an error if the install. directory is not given
+  if [[ -z "${INSTALL_DIR}" ]]; then
     err_msg_and_exit "${ERR_400}"
   fi
 
-  # 1/ Chargement des dépôts Git de chaque service (uniquement si existant)
-  for service in ${LISTE_SERVICES[@]}; do
-    charger_depot_service "${service}"
+  # 1/ Clone each service git repository (only if repo file exists)
+  for service in ${SERVICES_LIST[@]}; do
+    load_service_repo "${service}"
   done
 
-  # 2/ Écrasement éventuel des fichiers suivant le dossier "extras"
-  for service in ${LISTE_SERVICES[@]}; do
-    copier_extras_service "${service}"
+  # 2/ Override instance files with 'extras' directory
+  for service in ${SERVICES_LIST[@]}; do
+    copy_extras_dir "${service}"
   done
 }
 
-# Copie l'ensemble des fichiers du dossier 'extras' dans le répertoire
-# d'installation (à la racine)
-# 1: Nom du service étudié
-copier_extras_service() {
-  local origine="${REP_SERVICES}/${service}/${NOM_DOSSIER_EXTRAS}"
+# Copy all files from 'extras' directory into install. dir (base_dir).
+# 1: service from which copy extras directory
+copy_extras_dir() {
+  local origin="${REP_SERVICES}/${service}/${EXTRAS_DIRNAME}"
 
-  if [[ -d "${origine}" ]]; then
-    info_msg "${service}: Copie des fichiers du dossier extras"
+  if [[ -d "${origin}" ]]; then
+    info_msg "${service}: Copy 'extras' directory content"
     # On ajoute une étoile après les guillemets pour prendre tous les fichiers
-    cp -r "${origine}/"* "${REP_INSTALLATION}/"
+    cp -r "${origin}/"* "${INSTALL_DIR}/"
   fi
 }
 
-# Liste des configs disponibles comme base pour les instances
+# List of configs available as a basis for instances
 list_configs() {
   detection=false
 
-  info_msg "Liste des configs"
+  info_msg "Configs list"
 
-  for config in `find "${REP_CONFIGS}" -type f -name "*.sh" -printf "%f\n"`; do
-    # Exclusion de la config. common
+  for config in `find "${CONFIGS_DIR}" -type f -name "*.sh" -printf "%f\n"`; do
+    # Exclude common config.
     if [[ "${config}" != "common.sh" ]]; then
       msg "  - ${config/.sh/}"
       detection=true
@@ -170,126 +167,121 @@ list_configs() {
   done
 
   if ! ${detection}; then
-    warning_msg "Aucune config. trouvée."
+    warning_msg "No config. found."
   fi
 }
 
 # Listing des services trouvés
-lister_services() {
-  for service in ${LISTE_SERVICES[@]}; do
-    info_msg "Service : ${service}"
+list_services() {
+  for service in ${SERVICES_LIST[@]}; do
+    info_msg "Service: ${service}"
   done
 }
 
 
-# Traite le chargement d'une config.
-# 1: Nom de la config. située dans le dossier REP_CONFIGS
+# Process config. loading
+# 1: Name of configuration file located in CONFIG_DIR folder
 load_config() {
-  # Découverte de l'ensemble des services associés au fichier fourni
-  decouverte_services "${1}"
-
-  # Listing des services trouvés
-  lister_services  
+  discover_services "${1}"
+  list_services
 }
 
-# Créé une instance à partir de la config. donnée en argument.
-# 1: Nom de la config. située dans le dossier REP_CONFIGS
-# On va procéder en plusieurs étapes : 
-# - création du répertoire si besoin
-# - TODO: extinction de précédents conteneurs
-# - (re)création du fichier docker-compose.yml
-# - installation des fichiers nécessaires à l'instance
-# - TODO: déclencheur pour le script avant build Docker
-# - TODO: lancement du build Docker (pour éventuellement afficher une erreur)
-# - déclencheur pour le script avant le lancement des conteneurs Docker
-# - lancement des conteneurs
-# - déclencheur pour le script après le lancement des conteneurs Docker
-creer_instance() {
-  # Répertoire de l'instance
-  REP_INSTALLATION="${REP_INSTANCES}/${1}"
+# Create an instance from the config. given in argument
+# 1: Config. name located in CONFIGS_DIR folder
+# Several steps would be executed:
+# - create a directory for the instance if needed
+# - TODO: stop prevous containers
+# - docker-compose.yml file creation
+# - installation of files needed for the instance
+# - TODO: execute the hook before Docker build command
+# - TODO: launch Docker build (to eventually display an error)
+# - hook script before Docker containers are launched
+# - run containers
+# - hook script after Docker containers are ready
+create_instance() {
+  # Instance installation folder
+  INSTALL_DIR="${INSTANCES_DIR}/${1}"
 
-  # Vérification de la présence du dossier
-  if [[ ! -d "${REP_INSTALLATION}" ]]; then
-    mkdir -p "${REP_INSTALLATION}" && success_msg "Création répertoire '${REP_INSTALLATION}'"
+  # Check if directory exists
+  if [[ ! -d "${INSTALL_DIR}" ]]; then
+    mkdir -p "${INSTALL_DIR}" && success_msg "'${INSTALL_DIR}' directory creation"
   fi
 
-  # TODO: si le dossier existait déjà, il faut couper les conteneurs
+  # TODO: if folder already exists, we should stop containers
 
-  # Préparation de l'environnement docker (docker-compose.yml + .env)
-  creer_espace_docker "${REP_INSTALLATION}"
+  # Initialize instance docker environment (docker-compose.yml, .env)
+  creer_espace_docker "${INSTALL_DIR}"
 
-  # Avant de lancer quoique ce soit, on charge les fichiers "extras" dans le
-  # répertoire d'installation
-  charger_fichiers_services
+  # Before to run something we load 'extras' files in 
+  # instance installation directory
+  load_services_files
 
-  # TODO: Lancement de la commande "build" de Docker Compose
-  # TODO: AVANT la commande build, exécuter les scripts
-  # "declencheur_pre_docker_build" si existant
+  # TODO: run docker compose build command
+  # TODO: BEFORE docker compose build, we need to execute scripts
+  # "pre_docker_build_hook" if exists
 
-  # Lancement du script "declencheur_pre_docker" s'il existe dans
-  # le dossier d'un service
-  executer_script_services "${NOM_DECLENCHEUR_PRE_DOCKER}"
+  # Run 'pre_docker_hook' script if exists in service directory
+  run_services_script "${PRE_DOCKER_HOOK_NAME}"
 
-  # Démarrage des conteneurs Docker
-  demarre_conteneurs "${REP_INSTALLATION}"
+  # Start docker containers
+  demarre_conteneurs "${INSTALL_DIR}"
 
-  # Lancement du script "declencheur_post_docker" s'il existe dans
-  # le dossier d'un service
-  executer_script_services "${NOM_DECLENCHEUR_POST_DOCKER}"
+  # Run 'post_docker_hook' script if exists in service directory
+  run_services_script "${POST_DOCKER_HOOK_NAME}"
 }
 
-# Listing des instances installées
-lister_instances() {
+# Lists installed instances
+instances_list() {
   detection=false
 
-  if [[ ! -d "${REP_INSTANCES}" ]]; then
-    err_msg_and_exit "Répertoire d'instance manquant : ${REP_INSTANCES}"
+  if [[ ! -d "${INSTANCES_DIR}" ]]; then
+    err_msg_and_exit "Instance folder missing: ${INSTANCES_DIR}"
   fi
 
-  info_msg "Liste des instances"
+  info_msg "Instances list"
 
-  # Liste des dossiers du répertoire des instances
-  for instance in `ls "${REP_INSTANCES}"`; do
-    fichier="${REP_INSTANCES}/${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
-    if [[ -f "${fichier}" ]]; then
-      msg "  - ${REP_INSTANCES}/${instance}"
+  # Folders list in instances directory
+  for instance in `ls "${INSTANCES_DIR}"`; do
+    filepath="${INSTANCES_DIR}/${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
+    if [[ -f "${filepath}" ]]; then
+      msg "  - ${INSTANCES_DIR}/${instance}"
       detection=true
     fi
   done
 
   if ! ${detection}; then
-    warning_msg "Aucune instance trouvée."
+    warning_msg "No instance found."
   fi
 }
 
-# Supprime l'instance donnée
-# 1: Nom de l'instance
-supprimer_instance() {
-  REP_INSTALLATION="${REP_INSTANCES}/${1}"
+# Delete given instance
+# 1: instance name
+delete_instance() {
+  INSTALL_DIR="${INSTANCES_DIR}/${1}"
 
-  # Contrôle de l'existence de l'instance
-  if [[ ! -d "${REP_INSTALLATION}" ]]; then
-    err_msg_and_exit "Instance non trouvée : ${1} (dans ${REP_INSTALLATION})"
+  # Check if instance directory exists
+  if [[ ! -d "${INSTALL_DIR}" ]]; then
+    err_msg_and_exit "Instance not found: ${1} (in ${INSTALL_DIR} folder)"
   fi
 
-  # Alerte à l'utilisateur pour éviter les erreurs
-  warning_msg "Êtes-vous sûr de vouloir supprimer l'instance ${REP_INSTALLATION} ? (o/N)"
+  # User warning to avoid errors
+  warning_msg "Are you sure you want to delete ${INSTALL_DIR} instance? (y/N)"
   read reponse
 
   case "${reponse}" in
-    o|O)
-      info_msg "Suppression de : ${REP_INSTALLATION}"
+    y|Y)
+      info_msg "Deleting: ${INSTALL_DIR}"
 
-      # Extinction d'éventuels conteneurs lancés
-      suppression_conteneurs "${REP_INSTALLATION}"
+      # Extinction of possible started containers
+      suppression_conteneurs "${INSTALL_DIR}"
 
-      # Suppression de l'instance
-      rm -rf "${REP_INSTALLATION}"
+      # Delete instance
+      rm -rf "${INSTALL_DIR}"
 
-      success_msg "Instance supprimée : ${1} (dans ${REP_INSTALLATION})"
+      success_msg "Instance deleted: ${1} (in ${INSTALL_DIR} folder)"
       ;;
     *)
-      info_msg "Aucune instance supprimée."
+      info_msg "No instance deleted."
       ;;
   esac
 }
@@ -298,14 +290,14 @@ supprimer_instance() {
 ## TESTS
 ###
 
-# On a besoin du répertoire contenant les configs
-if [[ ! -d "${REP_CONFIGS}" ]]; then
-  err_msg_and_exit "Répertoire manquant : ${REP_CONFIGS}"
+# We need configs. directory
+if [[ ! -d "${CONFIGS_DIR}" ]]; then
+  err_msg_and_exit "Folder missing: ${CONFIGS_DIR}"
 fi
 
-# Création du répertoire des instances s'il n'existe pas
-if [[ ! -d "${REP_INSTANCES}" ]]; then
-  mkdir -p "${REP_INSTANCES}"
+# Create instances directory if it doesn't exist
+if [[ ! -d "${INSTANCES_DIR}" ]]; then
+  mkdir -p "${INSTANCES_DIR}"
 fi
 
 # vim: ts=2 sw=2 et nu syn=bash

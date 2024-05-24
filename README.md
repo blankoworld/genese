@@ -95,18 +95,18 @@ C'est de cette manière qu'on permet d'avoir un outil intéressant pour des inst
 
 L'utilisation de variables d'environnement permettent de personnaliser le comportement de l'outil.
 
-- `NOM_DECLENCHEUR_POST_DOCKER` : Nom du fichier contenant les commandes effectuées **après** le lancement de tous les conteneurs Docker. Le fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_post_docker.sh`. Valeur par défaut : `hook_post_docker.sh`
+- `POST_DOCKER_HOOK_NAME` : Nom du fichier contenant les commandes effectuées **après** le lancement de tous les conteneurs Docker. Le fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_post_docker.sh`. Valeur par défaut : `hook_post_docker.sh`
 - `NOM_DECLENCHEUR_POST_INSTALLATION` : Nom du fichier contenant des commandes à lancer à la fin de l'installation d'une instance. Il doit se trouver dans le dossier d'un service utilisé. Par exemple dans `./services/adminer/hook_fin.sh`. Valeur par défaut : `hook_fin.sh`
-- `NOM_DECLENCHEUR_PRE_DOCKER` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_pre_docker.sh`. Valeur par défaut : `hook_pre_docker.sh`
-- `NOM_DOSSIER_EXTRAS` : Nom du dossier contenant les fichiers qu'on souhaite déposer dans le répertoire d'une instance. Ce dossier se trouve dans les services pour lesquels on souhaite écraser quelques fichiers. Valeur par défaut : `extras`. Chaque fichier et dossier dans ce répertoire se retrouvera dans la destination finale.
-- `NOM_FICHIER_SOURCE` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
+- `PRE_DOCKER_HOOK_NAME` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_pre_docker.sh`. Valeur par défaut : `hook_pre_docker.sh`
+- `EXTRAS_DIRNAME` : Nom du dossier contenant les fichiers qu'on souhaite déposer dans le répertoire d'une instance. Ce dossier se trouve dans les services pour lesquels on souhaite écraser quelques fichiers. Valeur par défaut : `extras`. Chaque fichier et dossier dans ce répertoire se retrouvera dans la destination finale.
+- `REPO_FILENAME` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
 - `NOM_FICHIER_DOCKER_COMPOSE` : Nom du fichier Docker Compose final pour l'instance. Valeur par défaut : `docker-compose.yml`
 - `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `compose.yml`
 - `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
 - `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `default`
-- `REP_INSTANCES` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
-- `REP_CONFIGS` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
+- `INSTANCES_DIR` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
+- `CONFIGS_DIR` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
 - `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.example`
 - `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
 
@@ -128,16 +128,16 @@ En revanche elles peuvent être utilisées dans les scripts - dits déclencheurs
 
 Voici une liste non exhaustive des variables disponibles : 
 
-- `BRANCHE_MONSERVICE` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `BRANCHE_ADMINER="dev" ./genese -c default`
+- `MONSERVICE_BRANCH` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `ADMINER_BRANCH="dev" ./genese -c default`
 - `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
 - `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
 - `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
-- `LISTE_SERVICES` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
+- `SERVICES_LIST` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
 - `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
 - `CONFIG` : nom de la config. choisie par l'utilisateur
 - `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
-- `REP_BASE` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
-- `REP_INSTALLATION` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/default/`.
+- `BASE_DIR` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
+- `INSTALL_DIR` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/default/`.
 - `REP_TEMPLATES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
 - `SOURCE` : dépôt Git où trouver l'application `genese`.
 

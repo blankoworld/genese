@@ -111,7 +111,7 @@ creer_fichier_docker_compose() {
   cat "${ENTETE_DOCKER_COMPOSE}" > "${FICHIER_DOCKER_COMPOSE}"
 
   # ajout de chacun des services
-  for service in ${LISTE_SERVICES[@]}; do
+  for service in ${SERVICES_LIST[@]}; do
     fichier_service="${REP_SERVICES}/${service}/${NOM_FICHIER_SERVICE}"
 
     # contrôle existance du fichier de description du service
@@ -141,14 +141,14 @@ creer_fichier_env() {
   # Utilisation du nom de l'utilisateur comme préfixe,
   # agrémenté du nom du répertoire d'installation (qui est censé être unique…)
   # Remplacement des caractères '/' en '-'
-  COMPOSE_PROJECT_NAME=`echo "${USER/./-}-${REP_INSTALLATION##*/}" \
+  COMPOSE_PROJECT_NAME=`echo "${USER/./-}-${INSTALL_DIR##*/}" \
     |sed -e 's|/|-|g' \
     -e 's|\.|-|'`
 
   # Création du fichier
   echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
   echo "REP_SERVICES=\"${REP_SERVICES}\"" >> "${fichier_env}"
-  echo "REP_INSTALLATION=\"${REP_INSTALLATION}\"" >> "${fichier_env}"
+  echo "INSTALL_DIR=\"${INSTALL_DIR}\"" >> "${fichier_env}"
   echo "SOCKET_DOCKER=\"${SOCKET_DOCKER}\"" >> "${fichier_env}"
   echo "COMPOSE_PROJECT_NAME=\"${COMPOSE_PROJECT_NAME}\"" >> "${fichier_env}"
 

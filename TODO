@@ -7,5 +7,5 @@
 * Documentation sur les fonctions disponibles à l'utilisateur pour ses scripts (info_msg, etc.)
 * Initialiser la variable de DEBUG
 * Ajouter une variable d'environnement pour choisir l'image Portainer qu'on souhaite utiliser
-* Même idée de surcharge de variable avec XYZ_SOURCE que BRANCHE_XYZ ?
+* Même idée de surcharge de variable avec XYZ_SOURCE que XYZ_BRANCH ?
 * étape de "build" des Docker en utilisant les variables d'environnement (--env-file)
