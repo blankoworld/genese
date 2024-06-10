@@ -2,7 +2,7 @@ adminer:
   image: adminer
   restart: always
   ports:
-    - 0.0.0.0:${PORT_ADMINER:-}:8080
+    - 0.0.0.0:${ADMINER_PORT:-}:8080
   depends_on:
     - "db"
 

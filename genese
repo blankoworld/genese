@@ -121,14 +121,14 @@ configure() {
 message_post_creation_instance() {
   # Liste des conteneurs de l'instance choisie
   # INSTALL_DIR a été créé dans create_instance
-  lister_conteneurs "${INSTALL_DIR}"
+  list_containers "${INSTALL_DIR}"
 
   # Exécution pour chaque service du fichier 'declencheur_message_final'
   # s'il existe.
   run_services_script "${NOM_DECLENCHEUR_POST_INSTALLATION}"
 
   # Affichage des infos de portainer
-  info_msg "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${BOLD}${RED_COLOR}http://localhost:${PORT_PORTAINER}/${DEFAULT_COLOR}"
+  info_msg "Accès à l'ensemble des 'stacks' installées avec Docker (À METTRE EN FAVORI) : ${BOLD}${RED_COLOR}http://localhost:${PORTAINER_PORT}/${DEFAULT_COLOR}"
 
   success_msg "Instance '${1}' : Installation terminée."
 }
@@ -176,17 +176,17 @@ configure
 # Avant toute chose on charge le reste de la bibliothèque
 auto_chargement
 
-# Nom du fichier utilisé pour décrire un service
-NOM_FICHIER_SERVICE="${NOM_FICHIER_SERVICE:-compose.yml}"
+# filename used to describe a service
+SERVICE_FILENAME="${SERVICE_FILENAME:-compose.yml}"
 # Nom du déclencheur d'affichage des messages après installation
 NOM_DECLENCHEUR_POST_INSTALLATION="${NOM_DECLENCHEUR_POST_INSTALLATION:-hook_fin.sh}"
 
 # Chargement des variables dépendantes du répertoire de BASE
 # Répertoire dans lequel trouver les services
-REP_SERVICES="${REP_SERVICES:-${BASE_DIR}/services.example}"
+SERVICES_DIR="${SERVICES_DIR:-${BASE_DIR}/services.example}"
 # Répertoire dans lequel trouver les modèles (template) pour un certain
 # nombre de fichiers. Volontairement non modifiable par variable d'env.
-REP_TEMPLATES="${BASE_DIR}/templates"
+TEMPLATES_DIR="${BASE_DIR}/templates"
 
 # Load libraries
 source "${BASE_DIR}/lib/common"
@@ -196,8 +196,8 @@ source "${BASE_DIR}/lib/portainer"
 source "${BASE_DIR}/lib/configs"
 
 # On a besoin du répertoire des services
-if [[ ! -d "${REP_SERVICES}" ]]; then
-  err_msg_and_exit "Répertoire manquant : ${REP_SERVICES}"
+if [[ ! -d "${SERVICES_DIR}" ]]; then
+  err_msg_and_exit "Répertoire manquant : ${SERVICES_DIR}"
 fi
 
 # Nom de l'instance à utiliser

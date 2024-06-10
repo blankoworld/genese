@@ -100,25 +100,25 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `PRE_DOCKER_HOOK_NAME` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_pre_docker.sh`. Valeur par défaut : `hook_pre_docker.sh`
 - `EXTRAS_DIRNAME` : Nom du dossier contenant les fichiers qu'on souhaite déposer dans le répertoire d'une instance. Ce dossier se trouve dans les services pour lesquels on souhaite écraser quelques fichiers. Valeur par défaut : `extras`. Chaque fichier et dossier dans ce répertoire se retrouvera dans la destination finale.
 - `REPO_FILENAME` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
-- `NOM_FICHIER_DOCKER_COMPOSE` : Nom du fichier Docker Compose final pour l'instance. Valeur par défaut : `docker-compose.yml`
-- `NOM_FICHIER_SERVICE` : Nom du fichier décrivant un service (dans le dossier `REP_SERVICES`). Valeur par défaut : `compose.yml`
+- `DOCKER_COMPOSE_FILENAME`: final Docker Compose filename for the instance. Default value: `docker-compose.yml`
+- `SERVICE_FILENAME`: Filename describing a service (in `SERVICES_DIR` folder). Default value: `compose.yml`
 - `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
-- `PORT_PORTAINER` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
+- `PORTAINER_PORT` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `default`
 - `INSTANCES_DIR` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
 - `CONFIGS_DIR` : Chemin vers le répertoire qui contient les configs à utiliser. Valeur par défaut : `./configs.example`
-- `REP_SERVICES` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.example`
-- `SOCKET_DOCKER` : Adresse absolue vers le Socket Docker. Valeur par défaut : `/var/run/docker.sock`.
+- `SERVICES_DIR` : Chemin vers le répertoire qui contient les services à utiliser. Valeur par défaut : `./services.example`
+- `DOCKER_SOCKET`: Absolute address to Docker socket. Default value: `/var/run/docker.sock`.
 
 Vous pouvez surcharger les valeurs de ces variables en ligne de commande, par exemple : 
 
 ```bash
-PORT_PORTAINER=8282 ./genese
+PORTAINER_PORT=8282 ./genese
 ```
 
 ## Concernant les exemples de services fournis
 
-- `PORT_ADMINER` : Port d'écoute du service Adminer. Si non renseigné, Docker utiliser un port aléatoire disponible
+- `ADMINER_PORT` : Port d'écoute du service Adminer. Si non renseigné, Docker utiliser un port aléatoire disponible
 
 ## Générées par l'application
 
@@ -129,8 +129,8 @@ En revanche elles peuvent être utilisées dans les scripts - dits déclencheurs
 Voici une liste non exhaustive des variables disponibles : 
 
 - `MONSERVICE_BRANCH` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `ADMINER_BRANCH="dev" ./genese -c default`
-- `ENTETE_DOCKER_COMPOSE` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
-- `FICHIER_DOCKER_COMPOSE` : Adresse absolue du fichier Docker Compoe (docker-compose.yml) utilisé dans l'instance choisie. Par exemple si l'instance est dans le dossier `instance/mon_instance`, cela désigne le fichier `/adresse/absolue/instance/mon_instance/docker-compose.yml`.
+- `DOCKER_COMPOSE_HEADER_PATH` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
+- `DOCKER_COMPOSE_FILEPATH`: Docker Compose file (docker-compose.yml) absolute path used in a given instance. For example if the instance is in the `instance/my_instance` folder this means the file is: `/absolute/address/instance/my_instance/docker-compose.yml`.
 - `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
 - `SERVICES_LIST` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
 - `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
@@ -138,7 +138,7 @@ Voici une liste non exhaustive des variables disponibles :
 - `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
 - `BASE_DIR` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
 - `INSTALL_DIR` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/default/`.
-- `REP_TEMPLATES` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `entete.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
+- `TEMPLATES_DIR` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `header.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
 - `SOURCE` : dépôt Git où trouver l'application `genese`.
 
 

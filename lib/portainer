@@ -11,7 +11,7 @@
 NOM_PORTAINER="${NOM_PORTAINER:-genese_portainer}"
 
 # Port d'écoute du service portainer
-PORT_PORTAINER="${PORT_PORTAINER:-4000}"
+PORTAINER_PORT="${PORTAINER_PORT:-4000}"
 
 # Nom de l'image utilisée pour Portainer
 IMAGE_PORTAINER="portainer/portainer-ce:alpine"
@@ -26,15 +26,15 @@ lancer_portainer() {
 
   # Recherche d'un précédent conteneur PORTAINER
   info_msg "${titre} : Recherche de '${NOM_PORTAINER}'…"
-  etat=`${CMD_DOCKER} inspect --format="{{ .State.Status }}" "${NOM_PORTAINER}" 2> /dev/null` || : # Si erreur, on ne fait rien (le double point)
+  etat=`${DOCKER_CMD} inspect --format="{{ .State.Status }}" "${NOM_PORTAINER}" 2> /dev/null` || : # Si erreur, on ne fait rien (le double point)
 
   # Lancement du service si nécessaire
   succes="Lancé !"
   if [[ -z "${etat}" ]]; then
-    ${CMD_DOCKER} run -d -p "${PORT_PORTAINER}":9000 --name="${NOM_PORTAINER}" --restart=always -v "${SOCKET_DOCKER}":/var/run/docker.sock -v "${NOM_PORTAINER}":/data ${IMAGE_PORTAINER} && success_msg "${titre} : ${succes}" || exit 1
+    ${DOCKER_CMD} run -d -p "${PORTAINER_PORT}":9000 --name="${NOM_PORTAINER}" --restart=always -v "${DOCKER_SOCKET}":/var/run/docker.sock -v "${NOM_PORTAINER}":/data ${IMAGE_PORTAINER} && success_msg "${titre} : ${succes}" || exit 1
   elif [[ "${etat}" == "exited" ]]; then
     info_msg "${titre} : Le service existe. Lancement…"
-    ${CMD_DOCKER} start "${NOM_PORTAINER}" && success_msg "${titre} : ${succes}" || exit 1
+    ${DOCKER_CMD} start "${NOM_PORTAINER}" && success_msg "${titre} : ${succes}" || exit 1
   else
     success_msg "${titre} : État '${etat}'"
   fi

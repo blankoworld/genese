@@ -86,7 +86,7 @@ discover_services() {
 run_services_script() {
   if [[ -n "${1}" ]]; then
     for service in ${SERVICES_LIST[@]}; do
-      local filepath="${REP_SERVICES}/${service}/${1}"
+      local filepath="${SERVICES_DIR}/${service}/${1}"
       script_exec "${filepath}" "${service} service: run '${1}' script"
     done
   fi
@@ -102,7 +102,7 @@ load_service_repo() {
 
   # variable initialization
   local service="${1}"
-  local filepath="${REP_SERVICES}/${service}/${REPO_FILENAME}"
+  local filepath="${SERVICES_DIR}/${service}/${REPO_FILENAME}"
   local target_dir="${INSTALL_DIR}/${service}"
 
   # Chargement des informations si le fichier existe
@@ -143,7 +143,7 @@ load_services_files() {
 # Copy all files from 'extras' directory into install. dir (base_dir).
 # 1: service from which copy extras directory
 copy_extras_dir() {
-  local origin="${REP_SERVICES}/${service}/${EXTRAS_DIRNAME}"
+  local origin="${SERVICES_DIR}/${service}/${EXTRAS_DIRNAME}"
 
   if [[ -d "${origin}" ]]; then
     info_msg "${service}: Copy 'extras' directory content"
@@ -210,7 +210,7 @@ create_instance() {
   # TODO: if folder already exists, we should stop containers
 
   # Initialize instance docker environment (docker-compose.yml, .env)
-  creer_espace_docker "${INSTALL_DIR}"
+  create_docker_env "${INSTALL_DIR}"
 
   # Before to run something we load 'extras' files in 
   # instance installation directory
@@ -224,7 +224,7 @@ create_instance() {
   run_services_script "${PRE_DOCKER_HOOK_NAME}"
 
   # Start docker containers
-  demarre_conteneurs "${INSTALL_DIR}"
+  start_containers "${INSTALL_DIR}"
 
   # Run 'post_docker_hook' script if exists in service directory
   run_services_script "${POST_DOCKER_HOOK_NAME}"
@@ -242,7 +242,7 @@ instances_list() {
 
   # Folders list in instances directory
   for instance in `ls "${INSTANCES_DIR}"`; do
-    filepath="${INSTANCES_DIR}/${instance}/${NOM_FICHIER_DOCKER_COMPOSE}"
+    filepath="${INSTANCES_DIR}/${instance}/${DOCKER_COMPOSE_FILENAME}"
     if [[ -f "${filepath}" ]]; then
       msg "  - ${INSTANCES_DIR}/${instance}"
       detection=true
@@ -273,7 +273,7 @@ delete_instance() {
       info_msg "Deleting: ${INSTALL_DIR}"
 
       # Extinction of possible started containers
-      suppression_conteneurs "${INSTALL_DIR}"
+      delete_containers "${INSTALL_DIR}"
 
       # Delete instance
       rm -rf "${INSTALL_DIR}"

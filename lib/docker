@@ -1,244 +1,230 @@
 #!/usr/bin/env bash
 #
-# Dépendance de cette bibliothèque : 
+# Lib dependencies:
 # - common
 
 #####
 ## VARIABLES
 ###
 
-# Nom du fichier Docker Compose final (pour l'instance)
-NOM_FICHIER_DOCKER_COMPOSE="${NOM_FICHIER_DOCKER_COMPOSE:-docker-compose.yml}"
-# Adresse de l'entête utilisée pour le fichier Docker Compose final
-ENTETE_DOCKER_COMPOSE="${REP_TEMPLATES}/entete.yml"
-# Message d'erreur commun aux problèmes Docker
-MSG_ERR_DOCKER="Souci avec Docker"
-# Adresse du socket Docker
-SOCKET_DOCKER="${SOCKET_DOCKER:-/var/run/docker.sock}"
+# Final Docker Compose filename (for the instance)
+DOCKER_COMPOSE_FILENAME="${DOCKER_COMPOSE_FILENAME:-docker-compose.yml}"
+# Final Docker compose file header absolute path
+DOCKER_COMPOSE_HEADER_PATH="${TEMPLATES_DIR}/header.yml"
+# Common Docker error message
+DOCKER_ERR_MSG="Docker problem"
+# Docker socket address
+DOCKER_SOCKET="${DOCKER_SOCKET:-/var/run/docker.sock}"
 
-# Adresse du fichier docker-compose.yml. Cette variable est nécessaire pour
-# permettre aux multiples scripts des différents scripts d'y accéder.
-FICHIER_DOCKER_COMPOSE=""
+# docker-compose.yml filepath. This variable is needed for different
+# script to .access it.
+DOCKER_COMPOSE_FILEPATH=""
 
-# Commande DOCKER
-CMD_DOCKER=""
-# Commande Docker Compose
-CMD_DOCKER_COMPOSE=""
+# DOCKER command
+DOCKER_CMD=""
+# Docker Compose command
+DOCKER_COMPOSE_CMD=""
 
 #####
-## FONCTIONS
+## FUNCTIONS
 ###
 
-# Vérification de la commande Docker : 
-# - soit podman
-# - soit docker
-test_docker_present() {
+# Checking the Docker command:
+# - either podman
+# - or docker
+docker_ispresent() {
   for cmd in podman docker; do
     if [[ `which ${cmd} &> /dev/null; echo $?` == 0 ]]; then
-      export CMD_DOCKER=`which ${cmd}`
+      export DOCKER_CMD=`which ${cmd}`
       break
     fi
   done
-  if [[ -z "${CMD_DOCKER}" ]]; then
-    err_msg_and_exit "Commande DOCKER : non trouvée !"
+  if [[ -z "${DOCKER_CMD}" ]]; then
+    err_msg_and_exit "DOCKER command: not found!"
   fi
 }
 
-# Vérification de la commande Docker Compose
-# S'appuie sur CMD_DOCKER précédent
-test_docker_compose_present() {
-  # on ajoute "-compose" à CMD_DOCKER (podman-compose ou docker-compose)
-  cmd_compose="${CMD_DOCKER}-compose"
-  if [[ `${cmd_compose} &> /dev/null; echo $?` == 0 ]]; then
-    export CMD_DOCKER_COMPOSE="${cmd_compose}"
+# Checking the Docker compose command.
+# Based on previous DOCKER_CMD variable.
+docker_compose_ispresent() {
+  # add "-compose" to DOCKER_CMD (podman-compose or docker-compose)
+  compose_cmd="${DOCKER_CMD}-compose"
+  if [[ `${compose_cmd} &> /dev/null; echo $?` == 0 ]]; then
+    export DOCKER_COMPOSE_CMD="${compose_cmd}"
   else
-    # TODO: remanier code avec `docker info -f '{{json .ClientInfo.Plugins}}'`
-    cmd_compose="${CMD_DOCKER} compose"
-    ${cmd_compose} version &> /dev/null && export CMD_DOCKER_COMPOSE="${cmd_compose}"
+    # TODO: redraft code with `docker info -f '{{json .ClientInfo.Plugins}}'`
+    compose_cmd="${DOCKER_CMD} compose"
+    ${compose_cmd} version &> /dev/null && export DOCKER_COMPOSE_CMD="${compose_cmd}"
   fi
-  if [[ -z "${CMD_DOCKER_COMPOSE}" ]];  then
-    err_msg_and_exit "Commande DOCKER COMPOSE : non trouvée !"
+  if [[ -z "${DOCKER_COMPOSE_CMD}" ]];  then
+    err_msg_and_exit "DOCKER COMPOSE command not found!"
   fi
 }
 
-# Vérification du service Docker
-test_service_docker_en_execution() {
-  $CMD_DOCKER info &> /dev/null \
-    && success_msg "DOCKER : présent et lancé !" \
-    || err_msg_and_exit "DOCKER : manquant ! Vérifiez qu'il soit présent et lancé."
+# Check Docker service is launched.
+docker_service_islaunched() {
+  $DOCKER_CMD info &> /dev/null \
+    && success_msg "DOCKER: present and launched!" \
+    || err_msg_and_exit "DOCKER is missing! Check that it is present and launched."
 }
 
-# Initialisation de la variable globale contenant l'adresse du fichier
-# docker-compose.yml
-# 1: Répertoire duquel construire la variable
-initialisation_variable_docker_compose() {
-  # On ne créé du contenu pour la variable que si elle n'a jamais été remplie.
-  if [[ -z "${FICHIER_DOCKER_COMPOSE}" ]]; then
-    local debut_adresse=""
+# docker-compose.yml filepath global variable initialization
+# 1: Directory in which docker-compose.yml file exists
+docker_compose_filepath_variable_init() {
+  # Content is only created for the variable if it has never been filled
+  if [[ -z "${DOCKER_COMPOSE_FILEPATH}" ]]; then
+    local start_filepath=""
     if [[ -n "${1}" ]]; then
-      debut_adresse="${1}/"
+      start_filepath="${1}/"
     fi
-    FICHIER_DOCKER_COMPOSE="${debut_adresse}${NOM_FICHIER_DOCKER_COMPOSE}"
+    DOCKER_COMPOSE_FILEPATH="${start_filepath}${DOCKER_COMPOSE_FILENAME}"
   fi
 }
 
-# Création de l'espace Docker dans le répertoire donné en argument
-# 1: répertoire où installer le fichier docker-compose.yml et .env
-creer_espace_docker() {
-  local destination="${1}"
+# Create Docker environment in the given directory (argument 1)
+# 1: directory where to install docker-compose.yml and .env file
+create_docker_env() {
+  local dest="${1}"
 
-  # Création du fichier docker-compose.yml
-  creer_fichier_docker_compose "${destination}"
+  # docker-compose.yml file creation
+  create_docker_compose_file "${dest}"
 
-  # Création du fichier d'environnement dans le répertoire d'installation
-  creer_fichier_env "${destination}"
+  # env file creation in the installation directory
+  create_env_file "${dest}"
 }
 
-# Création du fichier docker-compose.yml dans le dossier donné
-# 1: Répertoire dans lequel créer le fichier docker-compose.yml
-creer_fichier_docker_compose() {
+# Create docker-compose.yml file in the given directory
+# 1: directory where to create docker-compose.yml file
+create_docker_compose_file() {
 
-  # contrôle du répertoire
+  # Check argument 1:
+  # - if given (mandatory)
+  # - if directory exists
   if [[ -z "${1}" ]]; then
-    err_msg_and_exit "Aucun répertoire donné"
+    err_msg_and_exit "No directory given"
   elif [[ ! -d "${1}" ]]; then
-    err_msg_and_exit "Répertoire non trouvé : ${1}"
+    err_msg_and_exit "Directory not found: ${1}"
   fi
 
-  initialisation_variable_docker_compose "${1}"
+  docker_compose_filepath_variable_init "${1}"
 
-  # entête du fichier final
-  cat "${ENTETE_DOCKER_COMPOSE}" > "${FICHIER_DOCKER_COMPOSE}"
+  # Final docker compose header filepath
+  cat "${DOCKER_COMPOSE_HEADER_PATH}" > "${DOCKER_COMPOSE_FILEPATH}"
 
-  # ajout de chacun des services
+  # concatenate each service in the docker-compose.yml file
   for service in ${SERVICES_LIST[@]}; do
-    fichier_service="${REP_SERVICES}/${service}/${NOM_FICHIER_SERVICE}"
+    service_filepath="${SERVICES_DIR}/${service}/${SERVICE_FILENAME}"
 
-    # contrôle existance du fichier de description du service
-    if [[ ! -f "${fichier_service}" ]]; then
-      err_msg_and_exit "Le fichier ${fichier_service} n'existe pas !"
+    # Check if service description file exists
+    if [[ ! -f "${service_filepath}" ]]; then
+      err_msg_and_exit "${service_filepath} file doesn't exist!"
     fi
 
-    # concaténation du contenu avec le fichier final
-    cat "${fichier_service}"|sed -e 's#^#  #g' >> "${FICHIER_DOCKER_COMPOSE}"
+    # concatenate current content with final docker-compose.yml file
+    cat "${service_filepath}"|sed -e 's#^#  #g' >> "${DOCKER_COMPOSE_FILEPATH}"
   done
 
-  success_msg "Fichier Docker Compose: ${FICHIER_DOCKER_COMPOSE}"
+  success_msg "Docker Compose file: ${DOCKER_COMPOSE_FILEPATH}"
 }
 
-# Création d'un fichier .env dans le répertoire donné en paramètre
-# 1: Répertoire d'installation du fichier .env
-creer_fichier_env() {
+# Creating a .env file in the given directory as parameter
+# 1: directory in which to install .env file
+create_env_file() {
   if [[ ! -d "${1}" ]]; then
-    err_msg_and_exit "Création d'un fichier .env : Destination '${1}' inexistante."
+    err_msg_and_exit ".env file creation: '${1}' destination not available."
   fi
 
-  local destination="${1}"
-  local fichier_env="${destination}/.env"
+  local dest="${1}"
+  local env_filepath="${dest}/.env"
 
-  info_msg ".env : mémorisation des variables d'environnement nécessaires."
+  info_msg ".env file: keep in memory needed environment variables."
 
-  # Utilisation du nom de l'utilisateur comme préfixe,
-  # agrémenté du nom du répertoire d'installation (qui est censé être unique…)
-  # Remplacement des caractères '/' en '-'
+  # Using the username as a prefix,
+  # then add directory installation name (supposely unique…)
+  # Characters replacement: '/' in '-'
   COMPOSE_PROJECT_NAME=`echo "${USER/./-}-${INSTALL_DIR##*/}" \
     |sed -e 's|/|-|g' \
     -e 's|\.|-|'`
 
-  # Création du fichier
-  echo "# Fichier généré par ${PROGRAMME}" > "${fichier_env}"
-  echo "REP_SERVICES=\"${REP_SERVICES}\"" >> "${fichier_env}"
-  echo "INSTALL_DIR=\"${INSTALL_DIR}\"" >> "${fichier_env}"
-  echo "SOCKET_DOCKER=\"${SOCKET_DOCKER}\"" >> "${fichier_env}"
-  echo "COMPOSE_PROJECT_NAME=\"${COMPOSE_PROJECT_NAME}\"" >> "${fichier_env}"
+  # Create the .env file
+  echo "# File generated by ${PROGRAMME}" > "${env_filepath}"
+  echo "SERVICES_DIR=\"${SERVICES_DIR}\"" >> "${env_filepath}"
+  echo "INSTALL_DIR=\"${INSTALL_DIR}\"" >> "${env_filepath}"
+  echo "DOCKER_SOCKET=\"${DOCKER_SOCKET}\"" >> "${env_filepath}"
+  echo "COMPOSE_PROJECT_NAME=\"${COMPOSE_PROJECT_NAME}\"" >> "${env_filepath}"
 
-  # Tous les "PORT_" s'ajoutent aussi (au cas où nous changeons des ports)
-  # Si pas de sortie de script, on retourne un statut à 0.
-  printenv|grep -E "^PORT_.*" >> "${fichier_env}" || :
+  # All '_PORT' are also added (in case we change ports)
+  # If no script output, return a status to 0.
+  printenv|grep -E ".*_PORT$" >> "${env_filepath}" || :
 }
 
-# Test si le fichier Docker Compose existe, sinon retourne une erreur
-# 1: Fichier Docker Compose
-test_existence_fichier_compose() {
-  fichier="${1}"
+# Test if Docker Compose file exists, otherwise returns an error
+# 1: Docker Compose file
+compose_file_ispresent() {
+  filepath="${1}"
 
-  if [[ -z "${fichier}" ]]; then
-    err_msg_and_exit "Aucun fichier Docker Compose fourni."
+  if [[ -z "${filepath}" ]]; then
+    err_msg_and_exit "No Docker Compose file provided."
   fi
 
-  # Si le fichier n'existe pas, on s'arrête !
-  if [[ ! -f "${fichier}" ]]; then
-    err_msg_and_exit "Fichier Docker Compose non trouvé : ${fichier}"
+  if [[ ! -f "${filepath}" ]]; then
+    err_msg_and_exit "Docker Compose file not found: ${filepath}"
   fi
 }
 
-# Démarrage des conteneurs liés au dossier donné (contenant un fichier
-# docker-compose.yml)
-# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
-demarre_conteneurs() {
+# Starts containers related to the given folder (that contains a docker-compose.yml file)
+# 1: Directory in which the docker-compose.yml file is located
+start_containers() {
 
-  initialisation_variable_docker_compose "${1}"
+  docker_compose_filepath_variable_init "${1}"
+  compose_file_ispresent "${DOCKER_COMPOSE_FILEPATH}"
+  docker_service_islaunched
 
-  # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
-  # Vérification que Docker est bel et bien lancé
-  test_service_docker_en_execution
+  # Starts containers
+  info_msg "Starting Docker Containers"
+  ${DOCKER_COMPOSE_CMD} -f "${DOCKER_COMPOSE_FILEPATH}" up -d || err_msg_and_exit \
+    "${DOCKER_ERR_MSG}"
 
-  # Démarrage des conteneurs
-  info_msg "Démarrage des conteneurs Docker"
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" up -d || err_msg_and_exit \
-    "${MSG_ERR_DOCKER}"
-
-  success_msg "Conteneurs Docker lancés"
+  success_msg "Docker Containers launched"
 }
 
-# Liste des conteneurs liés au dossier donné (contenant un fichier
-# docker-compose.yml)
-# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
-lister_conteneurs() {
+# List of containers related to the given folder (that contains a docker-compose.yml file)
+# 1: Directory in which the docker-compose.yml file is located
+list_containers() {
 
-  initialisation_variable_docker_compose "${1}"
+  docker_compose_filepath_variable_init "${1}"
+  compose_file_ispresent "${DOCKER_COMPOSE_FILEPATH}"
+  docker_service_islaunched
 
-  # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
-  # Vérification que Docker est bel et bien lancé
-  test_service_docker_en_execution
-
-  # Liste des conteneurs
-  info_msg "Liste des conteneurs Docker lancés"
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" ps || err_msg_and_exit \
-    "${MSG_ERR_DOCKER}"
+  # Containers list
+  info_msg "Launched Docker containers"
+  ${DOCKER_COMPOSE_CMD} -f "${DOCKER_COMPOSE_FILEPATH}" ps || err_msg_and_exit \
+    "${DOCKER_ERR_MSG}"
 }
 
-# Suppression des conteneurs liés au dossier donné (contenant un fichier
-# docker-compose.yml)
-# 1: Répertoire dans lequel se trouve le fichier docker-compose.yml
-suppression_conteneurs() {
+# Delete containers linked to the given folder (that contains a docker-compose.yml file)
+# 1: Directory in which the docker-compose.yml file is located
+delete_containers() {
 
-  initialisation_variable_docker_compose "${1}"
+  docker_compose_filepath_variable_init "${1}"
+  compose_file_ispresent "${DOCKER_COMPOSE_FILEPATH}"
+  docker_service_islaunched
 
-  # Vérification que le fichier Docker Compose existe
-  test_existence_fichier_compose "${FICHIER_DOCKER_COMPOSE}"
-  # Vérification que Docker est bel et bien lancé
-  test_service_docker_en_execution
+  # Stopping Docker Containers
+  ${DOCKER_COMPOSE_CMD} -f "${DOCKER_COMPOSE_FILEPATH}" kill || err_msg_and_exit \
+    "${DOCKER_ERR_MSG}"
+  # Containers deletion
+  ${DOCKER_COMPOSE_CMD} -f "${DOCKER_COMPOSE_FILEPATH}" down || err_msg_and_exit \
+    "${DOCKER_ERR_MSG}"
 
-  # Arrêt des conteneurs Docker
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" kill || err_msg_and_exit \
-    "${MSG_ERR_DOCKER}"
-  # Suppression des conteneurs
-  ${CMD_DOCKER_COMPOSE} -f "${FICHIER_DOCKER_COMPOSE}" down || err_msg_and_exit \
-    "${MSG_ERR_DOCKER}"
-
-  success_msg "Arrêt des conteneurs Docker"
+  success_msg "Docker Containers stopped"
 }
 
 #####
 ## TESTS
 ###
 
-# Vérification de la présence de Docker : arrêt du programme si absent
-test_docker_present
-# Vérification de la présence de Docker Compose : arrêt du programme si absent
-test_docker_compose_present
+docker_ispresent
+docker_compose_ispresent
 
 # vim: ts=2 sw=2 et nu syn=bash
