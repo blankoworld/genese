@@ -216,7 +216,7 @@ if "${CREATION_INSTANCE}"; then
   NOM_INSTANCE="${NOM_INSTANCE_CHOISI:-$CONFIG}"
   create_instance "${NOM_INSTANCE}"
   # Traitement post-installation
-  lancer_portainer
+  start_portainer
   # Affichage du message final d'installation pour l'instance choisie
   message_post_creation_instance "${NOM_INSTANCE}"
 elif [[ -n "${NOM_INSTANCE_CHOISI}" ]]; then

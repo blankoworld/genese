@@ -1,42 +1,44 @@
 #!/usr/bin/env bash
 #
-# Dépendance de cette bibliothèque : 
+# This library dependencies:
 # - docker
 
 #####
 ## VARIABLES
 ###
 
-# Nom du conteneur Portainer. Utilisé pour repérer ledit conteneur, notamment son état
-NOM_PORTAINER="${NOM_PORTAINER:-genese_portainer}"
+# Portainer container name. Used to locate more easily the container,
+# including its state
+PORTAINER_NAME="${PORTAINER_NAME:-genese_portainer}"
 
-# Port d'écoute du service portainer
+# Portainer listening port
 PORTAINER_PORT="${PORTAINER_PORT:-4000}"
 
-# Nom de l'image utilisée pour Portainer
-IMAGE_PORTAINER="portainer/portainer-ce:alpine"
+# Portainer docker image name
+PORTAINER_IMAGE="portainer/portainer-ce:alpine"
 
 #####
-## FONCTIONS
+## FUNCTIONS
 ###
 
-#
-lancer_portainer() {
-  titre="Service PORTAINER"
+# Start portainer container. If already exists: just start it.
+# If missing: create and start it!
+start_portainer() {
+  title="PORTAINER service"
 
-  # Recherche d'un précédent conteneur PORTAINER
-  info_msg "${titre} : Recherche de '${NOM_PORTAINER}'…"
-  etat=`${DOCKER_CMD} inspect --format="{{ .State.Status }}" "${NOM_PORTAINER}" 2> /dev/null` || : # Si erreur, on ne fait rien (le double point)
+  # Search if another PORTAINER container exists
+  info_msg "${title}: Search for '${PORTAINER_NAME}'…"
+  state=`${DOCKER_CMD} inspect --format="{{ .State.Status }}" "${PORTAINER_NAME}" 2> /dev/null` || : # if any error: do nothing (double point)
 
-  # Lancement du service si nécessaire
-  succes="Lancé !"
-  if [[ -z "${etat}" ]]; then
-    ${DOCKER_CMD} run -d -p "${PORTAINER_PORT}":9000 --name="${NOM_PORTAINER}" --restart=always -v "${DOCKER_SOCKET}":/var/run/docker.sock -v "${NOM_PORTAINER}":/data ${IMAGE_PORTAINER} && success_msg "${titre} : ${succes}" || exit 1
-  elif [[ "${etat}" == "exited" ]]; then
-    info_msg "${titre} : Le service existe. Lancement…"
-    ${DOCKER_CMD} start "${NOM_PORTAINER}" && success_msg "${titre} : ${succes}" || exit 1
+  # Start service if needed
+  succes="Started!"
+  if [[ -z "${state}" ]]; then
+    ${DOCKER_CMD} run -d -p "${PORTAINER_PORT}":9000 --name="${PORTAINER_NAME}" --restart=always -v "${DOCKER_SOCKET}":/var/run/docker.sock -v "${PORTAINER_NAME}":/data ${PORTAINER_IMAGE} && success_msg "${title}: ${succes}" || exit 1
+  elif [[ "${state}" == "exited" ]]; then
+    info_msg "${title}: Service already exists. Starting…"
+    ${DOCKER_CMD} start "${PORTAINER_NAME}" && success_msg "${title}: ${succes}" || exit 1
   else
-    success_msg "${titre} : État '${etat}'"
+    success_msg "${title}: '${state}' state"
   fi
 }
 

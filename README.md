@@ -102,7 +102,7 @@ L'utilisation de variables d'environnement permettent de personnaliser le compor
 - `REPO_FILENAME` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
 - `DOCKER_COMPOSE_FILENAME`: final Docker Compose filename for the instance. Default value: `docker-compose.yml`
 - `SERVICE_FILENAME`: Filename describing a service (in `SERVICES_DIR` folder). Default value: `compose.yml`
-- `NOM_PORTAINER` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
+- `PORTAINER_NAME` : Nom du conteneur Portainer. Utilisé pour repérer l'état de lancement dudit service. Valeur par défaut : `genese_portainer`
 - `PORTAINER_PORT` : Port d'écoute du service Portainer. Valeur par défaut : `4000`
 - `CONFIG` : Nom du fichier config par défaut. Valeur par défaut : `default`
 - `INSTANCES_DIR` : Chemin vers le répertoire où installer les instances générées par le logiciel. Valeur par défaut : `./instances`
@@ -131,7 +131,7 @@ Voici une liste non exhaustive des variables disponibles :
 - `MONSERVICE_BRANCH` : Remplacez **MONSERVICE** par le nom du service sur lequel vous travaillez. Mettez le nom de la branche par laquelle vous souhaitez démarrer l'instance. Imaginons que vous vouliez utiliser la branche `dev` du service **adminer**, faites : `ADMINER_BRANCH="dev" ./genese -c default`
 - `DOCKER_COMPOSE_HEADER_PATH` : Modèle de fichier ayant l'entête d'un fichier docker-compose.yml pour les fabriquer
 - `DOCKER_COMPOSE_FILEPATH`: Docker Compose file (docker-compose.yml) absolute path used in a given instance. For example if the instance is in the `instance/my_instance` folder this means the file is: `/absolute/address/instance/my_instance/docker-compose.yml`.
-- `IMAGE_PORTAINER` : nom de l'image Docker utilisée pour instancer Portainer.
+- `PORTAINER_IMAGE` : nom de l'image Docker utilisée pour instancer Portainer.
 - `SERVICES_LIST` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
 - `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
 - `CONFIG` : nom de la config. choisie par l'utilisateur
