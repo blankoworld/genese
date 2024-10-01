@@ -96,7 +96,7 @@ C'est de cette manière qu'on permet d'avoir un outil intéressant pour des inst
 L'utilisation de variables d'environnement permettent de personnaliser le comportement de l'outil.
 
 - `POST_DOCKER_HOOK_NAME` : Nom du fichier contenant les commandes effectuées **après** le lancement de tous les conteneurs Docker. Le fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_post_docker.sh`. Valeur par défaut : `hook_post_docker.sh`
-- `NOM_DECLENCHEUR_POST_INSTALLATION` : Nom du fichier contenant des commandes à lancer à la fin de l'installation d'une instance. Il doit se trouver dans le dossier d'un service utilisé. Par exemple dans `./services/adminer/hook_fin.sh`. Valeur par défaut : `hook_fin.sh`
+- `FINAL_INSTALLATION_HOOK_NAME` : Nom du fichier contenant des commandes à lancer à la fin de l'installation d'une instance. Il doit se trouver dans le dossier d'un service utilisé. Par exemple dans `./services/adminer/hook_fin.sh`. Valeur par défaut : `hook_fin.sh`
 - `PRE_DOCKER_HOOK_NAME` : Nom du fichier listant les actions à effectuer **avant** le lancement des conteneurs Docker. Ce fichier doit se trouver dans l'un des services utilisés. Par exemple dans `./services/postgres14/hook_pre_docker.sh`. Valeur par défaut : `hook_pre_docker.sh`
 - `EXTRAS_DIRNAME` : Nom du dossier contenant les fichiers qu'on souhaite déposer dans le répertoire d'une instance. Ce dossier se trouve dans les services pour lesquels on souhaite écraser quelques fichiers. Valeur par défaut : `extras`. Chaque fichier et dossier dans ce répertoire se retrouvera dans la destination finale.
 - `REPO_FILENAME` : Nom du fichier situé dans un répertoire service et décrivant la branche et le dépôt à utiliser pour charger d'éventuels fichiers du service. Valeur par défaut : `source`.
@@ -133,9 +133,9 @@ Voici une liste non exhaustive des variables disponibles :
 - `DOCKER_COMPOSE_FILEPATH`: Docker Compose file (docker-compose.yml) absolute path used in a given instance. For example if the instance is in the `instance/my_instance` folder this means the file is: `/absolute/address/instance/my_instance/docker-compose.yml`.
 - `PORTAINER_IMAGE` : nom de l'image Docker utilisée pour instancer Portainer.
 - `SERVICES_LIST` : tableau contenant la liste des services trouvés dans la configuration choisie par l'utilisateur.
-- `NOM_INSTANCE` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
+- `INSTANCE_NAME` : nom de l'instance (par défaut c'est le nom de la config, sauf si l'utilisateur a choisi un nom spécifique)
 - `CONFIG` : nom de la config. choisie par l'utilisateur
-- `PROGRAMME` : nom de l'application lancée. En théorie devrait se nommer `genese`.
+- `PROGRAM` : nom de l'application lancée. En théorie devrait se nommer `genese`.
 - `BASE_DIR` : adresse absolue du répertoire de base dans lequel se trouve l'application. C'est le répertoire où se trouve `genese`.
 - `INSTALL_DIR` : adresse absolue du répertoire dans lequel se trouve une installation du service choisi. Par exemple dans le dossier `instance/default/`.
 - `TEMPLATES_DIR` : Chemin vers le répertoire qui contient les modèles de fichier utilisés comme base pour générer d'autres fichiers. Par exemple `header.yml` est l'entête des fichiers `docker-compose.yml` qui seront générés pour chaque instance.
