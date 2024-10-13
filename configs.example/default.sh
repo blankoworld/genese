@@ -1,5 +1,5 @@
 PARENT="common"
 
 SERVICES=(
-    "adminer"
+    "adminerevo"
 )

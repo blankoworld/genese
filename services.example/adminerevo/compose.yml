@@ -1,5 +1,5 @@
 adminer:
-  image: adminer
+  image: shyim/adminerevo:4.8.4
   restart: always
   ports:
     - 0.0.0.0:${ADMINER_PORT:-}:8080
