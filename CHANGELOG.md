@@ -1,14 +1,49 @@
 # Genese CHANGELOG
 
-Changements effectués sur l'application dans les dernières versions.
+Changes made on the application in the latest versions.
 
 # Versions
+
+
+<a name="v0.2.1"></a>
+## [v0.2.1](https://github.com/blankoworld/genese/compare/v0.2.0...v0.2.1) (2024-10-19)
+
+### Features
+
+* **Adminer:** Use adminerevo instead of adminer (which is DEPRECATED)
+* **English:** Move 'services.exemple' dir. to 'services.example' one
+* **English:** Move lib/commun to lib/common
+* **English:** Translate lib/git file
+* **English:** Translate genese content
+* **English:** Translate lib/portainer in English
+* **English:** Translate lib/docker in English
+* **English:** Translate lib/configs in English
+* **English:** Translate lib/common in English
+* **English:** README - Translation in progress
+* **English:** Translate last files (hope its the end!)
+* **English:** Change all profils/PROFILS to 'config'/'configs'
+* **English:** Move defaut.sh file to default.sh one
+* **English:** Move 'commun.sh' file to 'common.sh' one
+* **English:** Translate README.md file
+* **English:** Move profils.exemple to configs.example
+* **English:** Move 'modeles' directory to 'templates' one
+* **English:** Move libs from 'bibliotheques' to 'lib' directory
+* **Memory Game:** ajout d'un nouveau profil Memory Game
+* **Scripts:** Reconnaissance par les IDE (ajout d'un suffixe .sh)
+
+### Bug fix
+
+* **Adminer:** Redémarrage, toujours
 
 
 <a name="v0.2.0"></a>
 ## [v0.2.0](https://github.com/blankoworld/genese/compare/v0.1.0...v0.2.0) (2023-09-08)
 
-### Correction de bugs
+### Release
+
+* v0.2.0
+
+### Bug fix
 
 * **Adminer:** Amélioration de l'URL pour accéder à postgreSQL
 * **Docker:** Correction de la variable d'environnement SOCKET_DOCKER
@@ -27,12 +62,12 @@ Changements effectués sur l'application dans les dernières versions.
 * **genese:** Oubli d'un argument pour messsage_post_creation_instance()
 * **genese:** Correction sur la récupération du dépôt Git officiel
 
-### Factorisation de code
+### Code refactoring
 
 * **Docker:** Refactorisation du code pour la détection de Docker/Compose
 * **genese:** Refactorisation de l'analyse des options
 
-### Fonctionnalités
+### Features
 
 * **Docker:** Préparation de l'environnement Docker avec un .env
 * **Docker:** Var. d'ENV globale pour fichier docker-compose.yml
@@ -55,7 +90,7 @@ Changements effectués sur l'application dans les dernières versions.
 <a name="v0.1.0"></a>
 ## v0.1.0 (2022-06-25)
 
-### Fonctionnalités
+### Features
 
 * **CHANGELOG:** Nouveau fichier CHANGELOG pour suivre le logiciel
 * **Commande:** Suppression d'une instance
@@ -70,13 +105,13 @@ Changements effectués sur l'application dans les dernières versions.
 * **TODO:** MàJ de la liste de tâches à faire
 * **TODO:** MàJ de la liste
 
-### Factorisation de code
+### Code refactoring
 
 * **Docker:** Extraction vers une bibliothèque séparée
 * **Instances:** installer_profil() -> creer_instance()
 * **Profils:** Extraction de la suppression des Docker dans une fonction
 
-### Correction de bugs
+### Bug fix
 
 * **Doc:** Correction de la documentation pour les variables d'env.
 * **Docker:** Complétude des variables d'environnement et documentation
