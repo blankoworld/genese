@@ -171,7 +171,7 @@ list_configs() {
   fi
 }
 
-# Listing des services trouvés
+# Found services listing
 list_services() {
   for service in ${SERVICES_LIST[@]}; do
     info_msg "Service: ${service}"

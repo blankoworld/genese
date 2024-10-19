@@ -19,9 +19,9 @@ options:
     #   refactor: Code Refactoring
     sort_by: Scope
     title_maps:
-      feat: Fonctionnalités
-      fix: Correction de bugs
-      refactor: Factorisation de code
+      feat: Features
+      fix: Bug fix
+      refactor: Code refactoring
       doc: Documentation
   header:
     pattern: "^(\\w*)(?:\\(([\\w\\$\\.\\-\\*\\s]*)\\))?\\:\\s(.*)$"

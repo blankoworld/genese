@@ -3,11 +3,11 @@
 # Makefile
 #
 
-# Mode déboggage. `Q= make` permet de débogguer.
+# Debug mode. `Q= make` permit to debug.
 Q ?= @
 
 #####
-## DÉBUT
+## START
 ###
 
 changelog:

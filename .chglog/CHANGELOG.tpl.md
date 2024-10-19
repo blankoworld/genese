@@ -1,6 +1,6 @@
 # {{ .Info.Title }}
 
-Changements effectués sur l'application dans les dernières versions.
+Changes made on the application in the latest versions.
 
 # Versions
 

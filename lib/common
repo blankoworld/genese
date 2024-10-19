@@ -49,7 +49,7 @@ warning_msg() {
 error_msg() {
   colored_msg "${ERROR_COLOR}" "ERR " "${1}"
 }
-# Success !
+# Success!
 success_msg() {
   colored_msg "${SUCCESS_COLOR}" " OK " "${1}"
 }
